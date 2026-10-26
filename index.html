@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Steadfast</title>
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Steadfast">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=DM+Sans:opsz,wght@9..40,400..700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{
+  color-scheme:light;
+  --text:#14161c;--muted:#565c6c;--card:rgba(255,255,255,.68);--card2:rgba(255,255,255,.88);
+  --line:rgba(20,24,40,.10);--field:rgba(255,255,255,.78);--shadow:0 10px 30px rgba(30,40,80,.10);
+  --accent:#2563eb;--on-accent:#fff;--bg0:#eaf3ff;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){color-scheme:dark;--text:#f2f3f7;--muted:#aab0bf;--card:rgba(16,18,28,.58);--card2:rgba(24,26,38,.9);--line:rgba(255,255,255,.12);--field:rgba(255,255,255,.08);--shadow:0 10px 30px rgba(0,0,0,.35)}
+}
+:root[data-theme="dark"]{color-scheme:dark;--text:#f2f3f7;--muted:#aab0bf;--card:rgba(16,18,28,.58);--card2:rgba(24,26,38,.9);--line:rgba(255,255,255,.12);--field:rgba(255,255,255,.08);--shadow:0 10px 30px rgba(0,0,0,.35)}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;background:var(--bg0);color:var(--text);font:16px/1.5 'DM Sans',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.wall{position:fixed;inset:0;z-index:0;pointer-events:none}
+.wall svg{width:100%;height:100%;display:block}
+main{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:12px 16px 124px}
+h1,h2,h3,.display{font-family:'Bricolage Grotesque','DM Sans',system-ui,sans-serif;margin:0}
+.display{font-size:clamp(42px,12.5vw,58px);line-height:.96;font-weight:800;letter-spacing:-.03em}
+.display.sm{font-size:30px;letter-spacing:-.02em}
+h2{font-size:21px;font-weight:700;letter-spacing:-.01em;margin-bottom:4px}
+h3{font-size:16px;font-weight:700;margin:18px 0 8px}
+h3:first-child{margin-top:0}
+p{margin:0}
+.muted{color:var(--muted)}.small{font-size:13.5px}.warn{color:#c2410c}
+.kicker{color:var(--muted);font-weight:600;font-size:15px;margin-bottom:8px}
+.anchor{color:var(--muted);margin-top:10px;font-weight:600}
+.pagehead{padding:12px 4px 6px}
+.card{background:var(--card);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5);border:1px solid var(--line);border-radius:26px;padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+.card.accent{background:color-mix(in srgb,var(--accent) 88%,transparent);color:var(--on-accent);border-color:transparent}
+.card.accent .muted{color:inherit;opacity:.82}
+.cardhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
+.cardhead h2{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:inherit}
+:is(button,a,input,textarea,select,summary):focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:999px;padding:14px 18px;background:var(--accent);color:var(--on-accent);font-weight:700;font-size:16px;transition:transform .12s}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:var(--field);color:var(--text);border:1px solid var(--line)}
+.btn.big{padding:18px;font-size:17px;margin:20px 0 8px}
+.btn.small{width:auto;padding:9px 18px;font-size:15px}
+.btn[disabled]{opacity:.55}
+.link{background:none;border:0;color:var(--accent);font-weight:700;padding:10px 0 0;display:block;margin:0 auto}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.iconbtn{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--field);display:grid;place-items:center;flex:none}
+.iconbtn.sm{width:34px;height:34px}
+.chk{width:30px;height:30px;border-radius:50%;border:2px solid color-mix(in srgb,var(--text) 24%,transparent);display:grid;place-items:center;flex:none;color:transparent;transition:background .15s,border-color .15s}
+.chk.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent);animation:pop .28s ease}
+@keyframes pop{50%{transform:scale(1.2)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Home */
+.appbar{display:flex;align-items:center;justify-content:space-between;padding:6px 2px 0}
+.mark{width:36px;height:36px;display:block;border-radius:9px;overflow:hidden;box-shadow:0 4px 14px rgba(255,46,138,.28)}
+.mark svg{display:block}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:6px 13px;border-radius:999px;background:var(--card2);border:1px solid var(--line);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);font-weight:800;font-size:15px;font-variant-numeric:tabular-nums;box-shadow:var(--shadow)}
+.qlab{display:block;font-size:13px;font-weight:700;color:var(--accent);margin-bottom:4px}
+.setacts{display:flex;gap:8px;margin-top:12px}
+.setacts button{flex:1;padding:10px 0;border-radius:999px;border:1px dashed color-mix(in srgb,var(--text) 28%,transparent);background:none;font-weight:700;font-size:14.5px}
+.uphint{color:#15803d;font-weight:700}
+:root[data-theme="dark"] .uphint{color:#4ade80}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .uphint{color:#4ade80}}
+.hero{display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px;padding:10px 4px 4px}
+.hello{font-weight:600;color:var(--muted)}
+.hero .display{margin-top:12px}
+.hero .anchor{margin-top:8px}
+.ringbox{text-align:center}
+.ring .rn{font:800 27px 'Bricolage Grotesque',sans-serif;fill:var(--text)}
+.ring .rl{font:600 12px 'DM Sans',sans-serif;fill:var(--muted)}
+.streak{font-size:13px;color:var(--muted);font-weight:700;margin-top:2px}
+.trow{display:flex;align-items:center;gap:14px;padding:12px 2px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;width:100%}
+.trow:last-child{border-bottom:0}
+.tico{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);flex:none}
+.grow{flex:1;min-width:0}
+.trow b{display:block;font-weight:700;line-height:1.3}
+.trow small{display:block;color:var(--muted);font-size:14px;line-height:1.35}
+.lockline{display:flex;align-items:center;gap:10px}
+.lockline h2{margin:0}
+.unlock{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:8px 14px;border-radius:999px;background:color-mix(in srgb,currentColor 12%,transparent);font-weight:600;font-size:14.5px}
+.unlock.on{background:#16a34a;color:#fff}
+.peek{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.peek p{padding:10px 12px;border-radius:14px;background:color-mix(in srgb,currentColor 10%,transparent);font-size:15px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px;text-align:center}
+.wd{padding:8px 0 10px;border-radius:16px}
+.wd.today{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.wd.future{opacity:.4}
+.wd b{display:block;font-size:13px;color:var(--muted);font-weight:700}
+.wd i{display:block;width:12px;height:12px;border-radius:50%;margin:7px auto 0;border:2px solid color-mix(in srgb,var(--text) 22%,transparent)}
+.wd i.on{background:var(--accent);border-color:var(--accent)}
+.wd i.sq{border-radius:4px}
+.legend{display:flex;gap:16px;font-size:13px;color:var(--muted);margin-top:8px;justify-content:center}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:50%;background:var(--accent);display:inline-block}
+.legend i.sq{border-radius:3px}
+.settingsbtn{display:flex;align-items:center;justify-content:center;gap:10px;margin:22px auto 4px;padding:12px 22px;border-radius:999px;border:1px solid var(--line);background:var(--card);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);font-weight:700}
+
+/* Water */
+.wnum{font:800 30px 'Bricolage Grotesque',sans-serif;letter-spacing:-.02em}
+.wnum small{font:600 15px 'DM Sans',sans-serif;color:var(--muted)}
+input[type=range].water{-webkit-appearance:none;appearance:none;width:100%;height:46px;margin:12px 0 4px;border-radius:999px;border:1px solid var(--line);background:linear-gradient(90deg,var(--accent) 0 var(--p,0%),var(--field) var(--p,0%))}
+input[type=range].water::-webkit-slider-thumb{-webkit-appearance:none;width:46px;height:46px;border-radius:50%;background:#fff;border:3px solid var(--accent);box-shadow:0 3px 10px rgba(0,0,0,.25)}
+input[type=range].water::-moz-range-thumb{width:40px;height:40px;border-radius:50%;background:#fff;border:3px solid var(--accent)}
+.quick{display:flex;gap:8px;margin-top:8px}
+.quick button{flex:1;padding:10px 0;border-radius:999px;border:1px solid var(--line);background:var(--field);font-weight:700;font-size:15px}
+
+/* Quiet time */
+.passages{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.passage{display:inline-flex;align-items:center;gap:8px;padding:11px 16px;border-radius:999px;background:var(--field);border:1px solid var(--line);text-decoration:none;font-weight:700}
+.passage svg{color:var(--accent)}
+.timer{text-align:center;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.clock{font:800 64px/1 'Bricolage Grotesque',sans-serif;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.bar{height:10px;border-radius:999px;background:var(--field);border:1px solid var(--line);overflow:hidden;margin:14px 0 16px}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .6s}
+.qs{list-style:none;counter-reset:q;padding:0;margin:10px 0 0}
+.qs li{counter-increment:q;padding:14px 0;border-bottom:1px solid var(--line)}
+.qs li:last-child{border-bottom:0;padding-bottom:0}
+.qs li p{display:flex;gap:10px;font-weight:600;line-height:1.45}
+.qs li p::before{content:counter(q);flex:none;width:26px;height:26px;border-radius:50%;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);display:grid;place-items:center;font-size:14px;font-weight:800}
+textarea,input[type=text],input[type=number],input[type=time],select{font:inherit;font-size:16px;color:var(--text);background:var(--field);border:1px solid var(--line);border-radius:14px;padding:11px 13px;width:100%}
+.qs textarea{margin-top:10px;resize:vertical;min-height:58px}
+.opts{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.opt{text-align:left;padding:13px 15px;border-radius:16px;border:1px solid var(--line);background:var(--field);font-weight:600;line-height:1.4}
+.opt.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 15%,var(--field));box-shadow:inset 0 0 0 1px var(--accent)}
+.rowcheck{display:flex;align-items:center;gap:12px;margin-top:14px;border:0;background:none;font-weight:700;padding:4px 0}
+.idea{font:600 20px/1.4 'Bricolage Grotesque',sans-serif;letter-spacing:-.005em;margin:10px 0 4px}
+.ideaacts{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.ideaacts .btn{flex:1;min-width:130px}
+
+/* Family */
+.chal{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px;margin-top:10px;border-radius:18px;border:1px solid var(--line);background:var(--field)}
+.chal .tag{display:block;font-size:13px;font-weight:700;color:var(--accent);margin-bottom:2px}
+.chal .txt{display:block;font-weight:600;line-height:1.4}
+.chal.on .txt{opacity:.6;text-decoration:line-through;text-decoration-thickness:1px}
+
+/* Workout */
+.chips{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:6px 0 4px}
+.chip{border:1px solid var(--line);background:var(--card);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-radius:16px;padding:8px 0;text-align:center;position:relative}
+.chip b{display:block;font-size:15px}
+.chip small{display:block;font-size:11px;color:var(--muted);font-weight:600}
+.chip.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.chip.on small{color:inherit;opacity:.85}
+.chip.today::after{content:"";position:absolute;top:5px;right:6px;width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.7}
+.restpill{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:var(--field);border-radius:999px;padding:3px}
+.restpill button{border:0;background:none;width:32px;height:32px;border-radius:50%;font-weight:800;font-size:18px}
+.restpill span{font-weight:700;font-size:14px;min-width:62px;text-align:center}
+.ex h2{font-size:19px}
+.target{color:var(--muted);font-weight:600;font-size:14px}
+.setrow{display:grid;grid-template-columns:48px 1fr 1fr 64px;gap:8px;align-items:center;margin-top:10px}
+.setn{font-weight:700;font-size:14px;color:var(--muted)}
+.fld{position:relative;display:block}
+.fld input{padding-right:42px;text-align:center;font-weight:700}
+.fld span{position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted);pointer-events:none}
+.donebtn{height:46px;border-radius:14px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-weight:800;display:grid;place-items:center}
+.donebtn.on{background:var(--accent);color:var(--on-accent)}
+.setrow.done input{opacity:.6}
+.toggle{display:flex;align-items:center;gap:14px;width:100%;padding:12px 0;border:0;border-bottom:1px solid var(--line);background:none;text-align:left}
+.toggle:last-child{border-bottom:0}
+.toggle b{display:block}.toggle small{display:block;color:var(--muted);font-size:14px}
+.stat{display:flex;gap:10px;margin-top:10px}
+.stat div{flex:1;padding:12px;border-radius:16px;background:var(--field);border:1px solid var(--line)}
+.stat b{display:block;font:800 26px 'Bricolage Grotesque',sans-serif}
+.stat small{color:var(--muted);font-weight:600}
+
+/* Food */
+.faststate{font:800 34px/1.05 'Bricolage Grotesque',sans-serif;letter-spacing:-.02em;margin-top:2px}
+.tl{position:relative;height:16px;border-radius:999px;background:var(--field);border:1px solid var(--line);margin:16px 0 6px;overflow:hidden}
+.tl .band{position:absolute;top:0;bottom:0;background:var(--accent);opacity:.85}
+.tl .now{position:absolute;top:-2px;bottom:-2px;width:4px;margin-left:-2px;background:var(--text);border-radius:2px}
+.tlx{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-weight:600}
+.meal{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
+.meal:last-child{border-bottom:0}
+.mtxt{font-weight:700;line-height:1.35}
+.calbox{position:relative;width:92px;flex:none}
+.calbox input{padding-right:30px;text-align:right;font-weight:800}
+.calbox span{position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted)}
+.total{display:flex;align-items:baseline;justify-content:space-between;margin-top:6px}
+.total b{font:800 30px 'Bricolage Grotesque',sans-serif}
+
+.composer{display:flex;gap:8px;margin-top:10px;align-items:stretch}
+.composer .calbox{width:112px}.composer .btn{flex:1;width:auto}
+.rchips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.rchip{flex:none;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--field);font-weight:600;font-size:14px}
+.rchip b{color:var(--accent);margin-left:4px}
+.mealrow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:13px 0;border:0;border-bottom:1px solid var(--line);background:none}
+.mealrow:last-child{border-bottom:0}
+.mline{display:block;margin-top:2px}.msrc{color:var(--accent);font-weight:600}
+.mealrow .mtxt{display:block}
+.mcal{text-align:right;flex:none}.mcal b{display:block;font:800 22px 'Bricolage Grotesque',sans-serif}.mcal small{color:var(--muted);font-size:12px}
+.mealrow>svg{color:var(--muted);flex:none}
+.itrow{display:grid;grid-template-columns:1fr 104px 34px;gap:8px;align-items:center;margin-top:10px}
+.danger{color:#dc2626}
+.perow{display:grid;grid-template-columns:1fr 54px 76px auto;gap:6px;align-items:center;margin-top:8px}
+.perow input{padding:10px 9px}
+.pehead{margin-top:14px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.peb{display:flex;gap:4px}
+.peb button{width:34px;height:42px;border-radius:10px;border:1px solid var(--line);background:var(--field);font-weight:800}
+.peb button[disabled]{opacity:.35}
+/* Tabs */
+.tabs{position:fixed;z-index:20;left:50%;bottom:0;transform:translateX(-50%);width:min(560px,100%);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:var(--card2);-webkit-backdrop-filter:blur(26px) saturate(1.6);backdrop-filter:blur(26px) saturate(1.6);border-top:1px solid var(--line)}
+.tab{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;font-size:11.5px;font-weight:700;color:var(--muted);border-radius:16px}
+.tab.on{color:var(--accent)}
+.tab.on svg{background:color-mix(in srgb,var(--accent) 16%,transparent);border-radius:12px}
+.tab svg{padding:3px 12px;box-sizing:content-box}
+
+/* Sheet */
+.sheet{position:fixed;inset:0;z-index:40;overflow:auto;-webkit-overflow-scrolling:touch;background:color-mix(in srgb,var(--bg0) 72%,transparent);-webkit-backdrop-filter:blur(34px);backdrop-filter:blur(34px);padding:calc(env(safe-area-inset-top,0px) + 8px) 16px calc(env(safe-area-inset-bottom,0px) + 40px)}
+.sheet-in{max-width:560px;margin:0 auto}
+.sheethead{display:flex;align-items:center;justify-content:space-between;padding:14px 4px 4px}
+.frow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0}
+.frow span{font-weight:600}
+.frow input,.frow select{max-width:56%}
+.fstack{display:block;margin-top:10px}
+.fstack span{display:block;font-weight:600;font-size:14px;margin-bottom:6px;color:var(--muted)}
+.swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sw{border:2px solid transparent;background:none;padding:0;border-radius:18px;text-align:center}
+.sw .tile{display:block;height:92px;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+.sw .tile svg{width:100%;height:100%;display:block}
+.sw em{display:block;font-style:normal;font-weight:700;font-size:13px;margin:5px 0 4px}
+.sw.on{border-color:var(--accent)}
+.seg{display:flex;padding:4px;border-radius:999px;background:var(--field);border:1px solid var(--line)}
+.seg button{flex:1;border:0;background:none;padding:9px 0;border-radius:999px;font-weight:700;font-size:15px}
+.seg button.on{background:var(--accent);color:var(--on-accent)}
+.lockwin{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-top:8px}
+details summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+details summary::-webkit-details-marker{display:none}
+details summary h3{margin:0}
+.steps{margin:12px 0 0;padding-left:20px}
+.steps li{margin-bottom:10px;line-height:1.45}
+
+/* Rest timer */
+.rest{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:color-mix(in srgb,var(--bg0) 55%,rgba(0,0,0,.35));-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);padding:24px}
+.rest[hidden]{display:none}
+.restcard{width:min(360px,100%);text-align:center;background:var(--card2);border:1px solid var(--line);border-radius:32px;padding:26px 20px 20px;box-shadow:var(--shadow)}
+.restring{position:relative;width:200px;height:200px;margin:4px auto 6px}
+.restring svg{width:100%;height:100%}
+.restnum{position:absolute;inset:0;display:grid;place-items:center;font:800 54px 'Bricolage Grotesque',sans-serif;font-variant-numeric:tabular-nums}
+.restbtns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:16px}
+.restbtns button{padding:13px 0;border-radius:999px;border:1px solid var(--line);background:var(--field);font-weight:800}
+.restbtns .skip{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+
+.toast{position:fixed;z-index:70;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 92px);transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--text);color:var(--bg0);padding:12px 18px;border-radius:999px;font-weight:700;font-size:15px;transition:opacity .2s,transform .2s;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<div class="wall" id="wall"></div>
+<main id="app"></main>
+<nav class="tabs" id="tabs" aria-label="Sections"></nav>
+<div id="sheet" class="sheet" hidden role="dialog" aria-label="Settings"></div>
+<div id="editor" class="sheet" hidden role="dialog" aria-label="Edit meal"></div>
+<div id="rest" class="rest" hidden role="dialog" aria-label="Rest timer">
+  <div class="restcard">
+    <p class="muted" style="font-weight:700">Rest</p>
+    <div class="restring">
+      <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="86" fill="none" stroke="var(--line)" stroke-width="14"/><circle id="restArc" cx="100" cy="100" r="86" fill="none" stroke="var(--accent)" stroke-width="14" stroke-linecap="round" stroke-dasharray="540.35" stroke-dashoffset="0" transform="rotate(-90 100 100)"/></svg>
+      <div class="restnum" id="restNum">1:00</div>
+    </div>
+    <p class="muted" id="restNext"></p>
+    <div class="restbtns"><button data-act="rt-minus">−15s</button><button class="skip" data-act="rt-skip">Skip</button><button data-act="rt-plus">+15s</button></div>
+  </div>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   EDITABLE CONTENT — ask Claude to change any of this.
+   ============================================================ */
+
+// Workout plan by weekday (0 = Sunday … 6 = Saturday). [exercise, sets, target]
+const DEFAULT_PLAN = {
+  1:{name:'Back & Biceps', s:'Back', ex:[['Lat pulldown',3,'10'],['Seated cable row',3,'10'],['Single-arm dumbbell row',3,'10 each'],['EZ-bar curl',3,'10'],['Incline dumbbell curl',3,'12']]},
+  2:{name:'Chest & Triceps', s:'Chest', ex:[['Dumbbell bench press',3,'10'],['Incline dumbbell press',3,'10'],['Cable fly',3,'12'],['Rope pushdown',3,'12'],['Overhead triceps extension',3,'12']]},
+  3:{name:'Quads, Calves & Core', s:'Legs', ex:[['Goblet squat',3,'10'],['Leg press',3,'12'],['Walking lunges',3,'10 each'],['Standing calf raise',3,'15'],['Plank',3,'45 sec']]},
+  4:{name:'Shoulders & Arms', s:'Arms', ex:[['Seated dumbbell press',3,'10'],['Lateral raise',3,'12'],['Rear delt fly',3,'12'],['Hammer curl',3,'12'],['Bench dips',3,'12']]},
+  5:{name:'Glutes, Hamstrings & Core', s:'Glutes', ex:[['Romanian deadlift',3,'10'],['Hip thrust',3,'10'],['Lying leg curl',3,'12'],['Bulgarian split squat',3,'8 each'],['Hanging knee raise',3,'12']]},
+  6:{name:'Saturday walk', s:'Walk', walk:true},
+  0:{name:'Sabbath rest', s:'Rest', rest:true}
+};
+let PLAN = DEFAULT_PLAN;
+function syncPlan(){PLAN=(S&&S.settings&&S.settings.plan)||DEFAULT_PLAN}
+
+// 30 daily themes, rotating. r = [label, YouVersion code]
+const THEMES = [
+ {t:'Abiding',a:'John 15:5',r:[['John 15','JHN.15'],['John 16','JHN.16']],
+  q:["Count how many times Jesus says abide (or remain) in John 15:1–11. What does He promise those who abide, and what happens to those who don’t?", "Jesus says apart from Him you can do nothing (15:5), yet you do plenty without praying. What kind of nothing does He mean, and what kind of fruit is He after?", "The Father prunes branches that are already bearing fruit (15:2). What does it tell you about God that He cuts back even what is growing?", "If someone studied your last week, where would they say your life actually draws its strength: Christ, achievement, approval, or comfort? Be specific.", "Jesus ties abiding to His words abiding in you (15:7). Which truth from these chapters will you carry through today, and when will you come back to it?"],
+  h:['Pause for one minute of prayer before you open your phone at lunch','Text a friend the reference John 15:5 and tell them why it matters to you','Pick one fruit of the Spirit to show at home tonight, and watch for the chance','Ask your wife how you can pray for her today']},
+ {t:'Rest',a:'Matthew 11:28–30',r:[['Matthew 11','MAT.11'],['Hebrews 4','HEB.4'],['Psalm 62','PSA.62']],
+  q:["In Matthew 11:25–30, who does the Father reveal things to, and who does Jesus invite to come? What connects those two groups?", "A yoke is still a tool for work. Why do you think Jesus offers a yoke as the path to rest instead of removing all work?", "Hebrews 4:15–16 describes Jesus as a high priest who sympathizes with weakness. How does that change how you come to Him when you’re worn out?", "Psalm 62:9–10 warns against trusting in status, schemes, and riches. What false refuge do you run to when you’re tired or stressed?", "Where could you actually stop striving today, and what are you afraid will happen if you do?"],
+  h:['Take a 10-minute walk today without your phone and pray as you go','Say no to one thing today that crowds out time with your family','Lie down with your kids at bedtime and simply be with them','Tell God out loud the one burden you are giving Him today']},
+ {t:'Courage',a:'Joshua 1:9',r:[['Joshua 1','JOS.1'],['Deuteronomy 31','DEU.31'],['Psalm 27','PSA.27']],
+  q:["How many times is Joshua told to be strong and courageous in chapter 1, and what reason is attached each time?", "God ties Joshua’s success to meditating on the Law day and night (1:8), not to military strategy. Why would Scripture be the key to courage for a general?", "In Deuteronomy 31:6–8 God promises not to leave or forsake. How does the rest of Joshua’s story show God keeping that promise?", "Fear often hides behind things that look responsible: caution, busyness, keeping the peace. Where is fear dressed up as wisdom in your life?", "Psalm 27 ends by calling you to wait on the Lord. What act of obedience are you delaying, and what is one courageous step you’ll take this week?"],
+  h:['Have the hard conversation you’ve been putting off, with gentleness','Lead your family in a short prayer tonight, even if it feels awkward','Encourage a man in your life who is facing something hard','Tell someone what God has been teaching you']},
+ {t:'Serving like Jesus',a:'Mark 10:45',r:[['John 13','JHN.13'],['Philippians 2','PHP.2'],['Mark 10','MRK.10']],
+  q:["John 13:1–5 tells you what Jesus knew before He washed feet. List what He knew. How do those facts lead to the towel?", "Peter refuses, then overcorrects (13:6–9). Why is it sometimes harder to let Jesus serve you than to serve Him?", "Philippians 2:6–8 traces Jesus stepping down again and again. What does each step reveal about the heart of God?", "In Mark 10:35–45, James and John wanted the seats of honor. Where do you serve your family while quietly wanting credit or control?", "Jesus came to give His life as a ransom (Mark 10:45). If you served at home the way He did, what would it cost you this week?"],
+  h:['Do the dishes or a household task tonight without being asked','Help a coworker with something that isn’t your job','Let someone else go first today: in traffic, in line, or in conversation','Get your oldest to help you serve Mom with a surprise']},
+ {t:'Love, defined',a:'1 John 4:19',r:[['1 Corinthians 13','1CO.13'],['1 John 4','1JN.4']],
+  q:["Paul lists what love is and is not in 1 Corinthians 13:4–7. Which items are actions, and which are inner attitudes?", "Why does Paul say faith that moves mountains and giving everything away are nothing without love (13:1–3)? What does love add that those lack?", "1 John 4:8–10 defines love by God sending His Son. How does the cross correct your idea of what love is?", "Read 13:4–7 with your name in place of love. Where would your wife say it rings least true right now?", "1 John 4:20 says you can’t love God while refusing to love the people in front of you. Who in your house needs a costly act of love from you today?"],
+  h:['Choose patience the next time a child tests you, and pray before you respond','Let go of one past offense with your wife and tell God you’re releasing it','Write a short note telling one of your kids why you love them','Do something kind for someone who can’t repay you']},
+ {t:'A husband’s calling',a:'Ephesians 5:25',r:[['Ephesians 5','EPH.5'],['Colossians 3','COL.3'],['1 Peter 3','1PE.3']],
+  q:["In Ephesians 5:25–33, what does Christ do for the church, and what is His goal for her? Note each verb.", "Paul grounds marriage in Christ and the church (5:32). How does that make your marriage a picture for the watching world, not just a private relationship?", "Christ loves the church to make her holy and radiant (5:26–27). What does that reveal about how Jesus loves you, flaws and all?", "1 Peter 3:7 warns that how a husband treats his wife can hinder his prayers. Is there anything in how you treat her that God would put His finger on?", "What is one concrete way you’ll lay down your preferences for her good this week, in her season with a newborn?"],
+  h:['Ask your wife what’s been hardest for her this week, and just listen','Pray over your wife by name before you leave the house','Take on one of her nightly tasks so she can rest','Tell her one way you see Jesus in her']},
+ {t:'Fatherhood',a:'Deuteronomy 6:6–7',r:[['Deuteronomy 6','DEU.6'],['Psalm 127','PSA.127'],['Psalm 128','PSA.128'],['Ephesians 6','EPH.6']],
+  q:["In Deuteronomy 6:4–9, what has to be on the parent’s heart before it can be taught to the children? Notice the order.", "Psalm 127:1 says unless the Lord builds the house, the builders labor in vain. How does that challenge a dad who feels responsible for everything?", "God calls Himself Father throughout Scripture. What does the way He fathers you show you about the dad you want to be?", "Ephesians 6:4 warns against provoking your children to anger. When do your kids see the worst of you, and what is usually going on in your heart then?", "Deuteronomy 6:7 names sitting, walking, lying down, and rising. Pick one of those moments this week and plan how you’ll talk about God in it."],
+  h:['Pray a blessing over each child at bedtime with your hand on their head','Tell your oldest a story about a time God helped you','Keep your phone away for the first 30 minutes after you get home','Thank God out loud at dinner for each family member by name']},
+ {t:'Self-control',a:'1 Corinthians 9:27',r:[['1 Corinthians 9','1CO.9'],['Galatians 5','GAL.5'],['Titus 2','TIT.2']],
+  q:["In 1 Corinthians 9:24–27, what does Paul compare himself to, and what does he do with his body? Why?", "Galatians 5:16–25 contrasts the works of the flesh with the fruit of the Spirit. Why does Paul call one works and the other fruit?", "Titus 2:11–12 says the grace of God trains us to say no to ungodliness. How is grace, not guilt, the engine of self-control?", "Your workouts and fasting take real discipline. Where do you have strong self-control for goals you care about but weak self-control in what God cares about?", "Which work of the flesh in Galatians 5:19–21 is closest to home right now, and how will you keep in step with the Spirit today (5:25)?"],
+  h:['When a craving hits during your fast, use it as a cue to pray','Keep your phone out of the bedroom tonight','Finish your workout and thank God for the body He gave you','Choose a gentle answer in a tense moment today']},
+ {t:'Prayer',a:'Matthew 6:6',r:[['Matthew 6','MAT.6'],['Luke 11','LUK.11']],
+  q:["In Matthew 6:5–8, what two wrong ways to pray does Jesus describe, and what does He say the Father already knows?", "If the Father knows what you need before you ask (6:8), why does Jesus still tell you to ask?", "In Luke 11:11–13 Jesus compares God to an earthly father giving good gifts. What does He say the Father most wants to give?", "Compare your actual prayers to the Lord’s Prayer. What do they reveal you value most: God’s name, His kingdom, or your requests?", "Luke 11:5–8 encourages bold persistence. What request have you given up on, and will you bring it back to God every day this week?"],
+  h:['Pray the Lord’s Prayer slowly with your family tonight','Set three short prayer pauses today: morning, noon, and before you head home','Ask a friend how you can pray for him, then pray right away','Pray with your wife before bed']},
+ {t:'Trust over worry',a:'Philippians 4:6–7',r:[['Matthew 6:19–34','MAT.6.19-34'],['Philippians 4','PHP.4']],
+  q:["Jesus talks about treasure (6:19–21) right before worry (6:25–34). How are the two connected?", "Jesus says worry can’t add a single hour to your life (6:27). If worry doesn’t work, why is it so hard to stop?", "Philippians 4:5 says the Lord is near, right before telling you not to be anxious. How does His nearness answer anxiety?", "What you worry about often shows what you treasure. What does your most frequent worry reveal about where your treasure is?", "Philippians 4:8 gives a list of things to think about. Pick one true and good thing about God to think on every time worry rises today."],
+  h:['Write down your top worry, pray over it, and throw the paper away','Thank God for three specific provisions before each meal today','Encourage your wife about something she’s worried about','Give generously to someone in need as an act of trust']},
+ {t:'Gratitude',a:'1 Thessalonians 5:18',r:[['Psalm 103','PSA.103'],['Luke 17:11–19','LUK.17.11-19'],['1 Thessalonians 5','1TH.5']],
+  q:["Psalm 103 tells your soul not to forget His benefits. List the benefits named in verses 2–5.", "All ten lepers were healed, but Jesus tells only the one who returned that his faith made him well (Luke 17:19). What did he receive that the others missed?", "Psalm 103:13–14 says God remembers we are dust. How does His tenderness toward weakness move you to thankfulness?", "Ingratitude often sounds like entitlement or complaining. Where have blessings in your life quietly turned into expectations?", "1 Thessalonians 5:18 says give thanks in all circumstances. Name the hardest circumstance you’re in right now, and write one honest thanksgiving inside it."],
+  h:['Tell three people something specific you’re thankful for about them','At dinner, have everyone share one thing they’re thankful for','Send a thank-you text to a mentor or pastor','Thank your wife for something she does that usually goes unseen']},
+ {t:'Integrity',a:'Proverbs 10:9',r:[['Psalm 15','PSA.15'],['Proverbs 10','PRO.10'],['Proverbs 11','PRO.11']],
+  q:["Psalm 15 describes the one who may dwell with God. Which traits are about speech, which about money, and which about relationships?", "Psalm 15:4 honors the one who keeps his word even when it hurts. Why is integrity so often proven by cost?", "Proverbs 11:1 says false scales are an abomination to the Lord. What does God’s concern with something as ordinary as scales tell you about Him?", "Proverbs 10:9 says crooked ways will be found out. Is there anything you’d be uncomfortable for your wife or pastor to see? Name it before God.", "Where at work, online, or at home will you choose integrity today, even though no one would know otherwise?"],
+  h:['Keep a promise today, even a small one, and keep it on time','Confess something hidden to God and, if needed, to a trusted brother','Do your work today as if Jesus were your boss','Tell the truth in a moment where shading it would be easier']},
+ {t:'The power of words',a:'Ephesians 4:29',r:[['James 3','JAS.3'],['Proverbs 15','PRO.15'],['Ephesians 4','EPH.4']],
+  q:["James 3 pictures the tongue as a bit, a rudder, a fire, poison, and a spring. What does each say about the power of words?", "James 3:9–10 says the same mouth blesses God and curses people made in His image. Why does James treat how you talk to people as a worship issue?", "Ephesians 4:30 warns against grieving the Holy Spirit in the middle of a passage about speech. What does it tell you that the Spirit is affected by your words?", "Jesus said the mouth speaks from what fills the heart (Luke 6:45). When your words are sharp at home, what is usually filling your heart?", "Ephesians 4:29 calls for words that fit the moment and give grace. What does each person in your home need to hear from you today?"],
+  h:['Speak only encouraging words at home tonight: no sarcasm, no complaints','Tell your oldest three specific things you’re proud of','Apologize for a harsh word you said recently','Send an encouraging message to someone at church']},
+ {t:'Forgiveness',a:'Colossians 3:13',r:[['Matthew 18','MAT.18'],['Colossians 3','COL.3']],
+  q:["In Matthew 18:21–35, compare the two debts. A talent was about twenty years of wages; a denarius was one day’s. What is Jesus showing with the difference?", "The master’s anger in 18:32–34 is about a forgiven man refusing to forgive. Why is an unforgiving heart so serious for someone who has been forgiven?", "Colossians 3:13 says forgive as the Lord forgave you. How did He forgive you: how fully, how often, at what cost?", "Forgiveness isn’t pretending it didn’t hurt. Is there a hurt you keep replaying? What are you still trying to collect from that person?", "Colossians 3:12–14 says to put on compassion, humility, patience, and love. Toward whom will you deliberately put these on today?"],
+  h:['Ask forgiveness from your wife or a child for something specific','Pray for someone who hurt you, by name','When your oldest disobeys today, show forgiveness after the correction','Release a grudge by telling God you’re letting it go']},
+ {t:'Humility',a:'James 4:10',r:[['James 4','JAS.4'],['Luke 18:9–14','LUK.18.9-14'],['1 Peter 5','1PE.5']],
+  q:["In Luke 18:9–14, notice who each man talks about in his prayer. What does that reveal?", "James 4:1–6 traces fights and quarrels back to desires at war within you. How does pride sit underneath conflict?", "James 4:6 says God gives more grace to the humble. Why would God resist the proud and pour grace on the humble?", "Pride can look like defensiveness, needing to be right, or never asking for help. Which form shows up in you most?", "1 Peter 5:5 says to clothe yourself with humility toward one another. Who do you need to humble yourself toward this week, and how?"],
+  h:['Ask your wife for honest feedback on how you’re doing as a husband, and thank her for it','Give someone else credit for a win today','Do a hidden act of service no one will ever know about','Admit a mistake quickly today']},
+ {t:'Who you are in Christ',a:'Ephesians 2:10',r:[['Ephesians 1','EPH.1'],['Ephesians 2','EPH.2']],
+  q:["List everything Ephesians 1:3–14 says God has done for you in Christ. How many did you find?", "Ephesians 2:1–3 describes who you were before Christ. Why does Paul make you remember that before telling you who you are now?", "Ephesians 2:4 is the turning point of the chapter. What does that turn reveal about God’s character?", "Where are you still trying to earn what Ephesians 1 says you’ve already been given? How does it show up in your work, fitness, or parenting?", "You were created for good works God prepared beforehand (2:10). Ask Him to show you one of today’s prepared works, and watch for it."],
+  h:['Tell each of your kids, “I love you no matter what you do”','Write one truth from Ephesians 1 on a card and keep it where you’ll see it','Do one good work today simply because God prepared it for you','Tell your wife who she is in Christ']},
+ {t:'Faithful in little',a:'Luke 16:10',r:[['Luke 16:1–13','LUK.16.1-13'],['Matthew 25:14–30','MAT.25.14-30']],
+  q:["In the parable of the talents, what did the master say to the faithful servants, and how did he describe the one who buried his talent?", "Luke 16:11 asks who will trust you with true riches if you aren’t faithful with money. What are the true riches Jesus means?", "The master entrusts his property and then leaves (Matthew 25:14–15). What does it say about God that He trusts ordinary people with His things?", "The fearful servant had a wrong view of his master (25:24). Does any fear or wrong view of God keep you from investing what He’s given you?", "Jesus says you can’t serve God and money (Luke 16:13). What small daily act of faithfulness with time, money, or attention will you practice this week?"],
+  h:['Finish a small task you’ve been putting off','Fix something at home you said you would fix','Give your kids your full attention for 20 minutes','Give toward your church as an act of faithfulness']},
+ {t:'Joy',a:'Nehemiah 8:10',r:[['Nehemiah 8','NEH.8'],['Psalm 16','PSA.16'],['Psalm 100','PSA.100']],
+  q:["In Nehemiah 8 the people weep when they hear the Law, but they’re told to celebrate instead. Why were they weeping, and why the call to celebrate?", "Nehemiah 8:10 says the joy of the Lord is your strength. Is that joy He gives, joy you have in Him, or both? Why does it matter?", "Psalm 16:11 says fullness of joy is found in God’s presence. What does it say about Him that real joy is found in Him, not just His gifts?", "If your joy rises and falls with your circumstances, what does that show about where it’s rooted?", "Psalm 16:8 speaks of setting the Lord always before you. What practice will help you do that today, at work and at home?"],
+  h:['Have a dance party with your kids tonight','Play worship music in the car and sing out','Laugh with your wife about a favorite memory','Tell someone what God has done for you this year']},
+ {t:'Generosity',a:'2 Corinthians 9:7',r:[['2 Corinthians 8','2CO.8'],['2 Corinthians 9','2CO.9']],
+  q:["2 Corinthians 8:1–5 describes the Macedonian churches. List what they had and what they did. What did they give first (8:5)?", "Paul says he isn’t commanding them (8:8). Why does generosity have to come from the heart rather than pressure?", "2 Corinthians 9:8–11 says God is able to make all grace abound. What does this passage say about God as the first and greatest giver?", "What do your giving and spending show you love most? Is there fear or control in how you hold your money?", "2 Corinthians 9:7 says each should give as he has decided in his heart. What will you decide before God about your giving this month?"],
+  h:['Buy coffee or lunch for someone today','Let your oldest help you give to someone in need','Give your wife an evening off','Pray about your giving to the church this month']},
+ {t:'Purity',a:'Psalm 119:9',r:[['Psalm 119:1–48','PSA.119.1-48'],['1 Thessalonians 4','1TH.4']],
+  q:["Psalm 119:9–16 lists what the psalmist does with God’s Word. Make a list of the verbs.", "1 Thessalonians 4:3–8 says God’s will is your sanctification. Why does Paul say rejecting this is rejecting God Himself, not just a rule (4:8)?", "God calls His people to be holy because He is holy. What does His call to purity show about His love for you and your marriage?", "Purity starts in the heart before the eyes. What need are you trying to meet when temptation pulls at you: comfort, escape, or significance?", "Psalm 119:11 talks about storing God’s Word in your heart. What guardrail will you set up today, and which verse will you memorize to fight with?"],
+  h:['Delete or block one app or account that pulls you toward compromise','Memorize Psalm 119:9 today','Text an accountability partner to check in','Thank God for your wife and pray for your marriage']},
+ {t:'Telling others',a:'Acts 1:8',r:[['Acts 1','ACT.1'],['Acts 2','ACT.2']],
+  q:["In Acts 1:8, what does Jesus promise first, and then what? In what order does the witness spread?", "Before Pentecost the disciples were told to wait (1:4). Why did they need the Spirit’s power before they could witness?", "In Acts 2:22–36, what does Peter say God did through Jesus? What does that reveal about God’s plan?", "If you rarely talk about Jesus, what’s the real reason: fear of rejection, not knowing what to say, or not feeling the urgency?", "Acts 2:46–47 describes open homes and people added daily. Who is one person you’ll pray for and move toward this week?"],
+  h:['Pray for three people by name who need Jesus','Invite someone to church this Sunday','Tell someone your story of meeting Jesus','Invite a neighbor family over']},
+ {t:'Perseverance',a:'Hebrews 12:1–2',r:[['Hebrews 12','HEB.12'],['James 1','JAS.1']],
+  q:["Hebrews 12:1 comes right after Hebrews 11’s list of faithful people. Who is the great cloud of witnesses, and how should they affect your race?", "Hebrews 12:5–11 calls hardship discipline. How is God’s discipline different from punishment?", "Hebrews 12:2 calls Jesus the founder and perfecter of our faith. How does looking at His endurance give you endurance?", "James 1:13–15 traces temptation to your own desires. When you want to quit, what desire is pulling you?", "James 1:5 promises wisdom to anyone who asks. Where do you need wisdom to keep going? Ask for it right now."],
+  h:['Push through your workout and pray during the hardest set','Encourage someone who is running a hard race right now','Keep going on a commitment you’ve wanted to drop','Fix your eyes on Jesus: pause three times today to pray']},
+ {t:'God’s Word',a:'2 Timothy 3:16–17',r:[['Psalm 1','PSA.1'],['Psalm 19','PSA.19'],['2 Timothy 3','2TI.3']],
+  q:["Psalm 19 has two halves: God revealed in creation (19:1–6) and in His Word (19:7–11). What does each half show you?", "2 Timothy 3:16–17 lists four things Scripture is useful for. What’s the difference between teaching, rebuking, correcting, and training?", "God has spoken and hasn’t left us guessing. What does that tell you about His desire to be known?", "Psalm 1:2 describes delighting in God’s law. Honestly, is Bible reading a delight or a duty for you right now? What might change that?", "Psalm 19:14 is a prayer about your words and thoughts. Pray it, then pick one verse from today to meditate on all day."],
+  h:['Read a short passage to your kids at dinner','Memorize one verse this week as a family','Text a verse reference to your wife with a note on why','Share something from your reading with a friend']},
+ {t:'Contentment',a:'Hebrews 13:5',r:[['1 Timothy 6','1TI.6'],['Hebrews 13','HEB.13']],
+  q:["In 1 Timothy 6:6–10, what does Paul say we brought into the world and can take out? Where does he say the desire to be rich leads?", "Paul says godliness with contentment is great gain. Why pair godliness with contentment?", "Hebrews 13:5 grounds contentment in God’s promise never to leave you. How is His presence the real answer to wanting more?", "Finish this honestly: If I just had ___, I’d be satisfied. What does your answer show about your heart?", "1 Timothy 6:17–19 calls the rich to be rich in good works. What would being rich in good works look like for you this week?"],
+  h:['Go a day without buying anything nonessential','Walk through your home and thank God room by room','Unfollow an account that feeds discontent','Tell your wife you’re content with her and your life together']},
+ {t:'Patience',a:'Psalm 37:7',r:[['Psalm 37','PSA.37'],['James 5','JAS.5']],
+  q:["Psalm 37:1–9 gives a chain of commands: don’t fret, trust, delight, commit, be still, wait. What does the order teach you?", "James 5:7–11 points to the farmer, the prophets, and Job. What do the three have in common?", "James 5:11 says the Lord is compassionate and merciful. How does God’s patience with you shape your patience with others?", "Impatience often reveals what you think you deserve. What does your impatience with your kids or your wife show about your expectations?", "Psalm 37:7 calls you to be still before the Lord. Where will you build a moment of stillness into today?"],
+  h:['Take three slow breaths and pray before responding when frustrated','Let your oldest do something slowly on their own without rushing them','Wait until your wife has completely finished talking before you speak','Drive the speed limit today and pray for the drivers around you']},
+ {t:'United',a:'Romans 12:10',r:[['John 17','JHN.17'],['Psalm 133','PSA.133'],['Romans 12','ROM.12']],
+  q:["In John 17:20–23, who does Jesus pray for, and what does He say their unity will show the world?", "Romans 12:3–8 talks about gifts in one body. Why does Paul warn against thinking too highly of yourself before he talks about gifts?", "John 17:21 roots our unity in the unity of the Father and the Son. What does that reveal about the God you worship?", "Where are you feeding division in your marriage, family, or church, even quietly, through criticism, withdrawal, or keeping score?", "Romans 12:9–21 is full of practical commands. Choose one to practice toward your wife this week and one toward your church family."],
+  h:['Talk with your wife about one parenting decision and get on the same page','Reach out to someone at church you’ve drifted from','Serve on a team at church this week','Honor your wife in front of others']},
+ {t:'The Good Shepherd',a:'John 10:11',r:[['John 10','JHN.10'],['Psalm 23','PSA.23']],
+  q:["In John 10:1–18, list what the good shepherd does and what the hired hand does.", "Jesus says He lays down His life of His own accord (10:18). Why does it matter that no one took His life from Him?", "Psalm 23 shifts from talking about God to talking to God in verse 4, right in the dark valley. What does that shift show about how He meets you?", "Sheep wander. Where have you drifted from the Shepherd’s voice lately, and what has been louder?", "As a husband and dad you shepherd your home under Him. What would laying down your life for your family look like this week?"],
+  h:['Spend five quiet minutes listening in prayer without asking for anything','Check on a friend who seems to be drifting','Read Psalm 23 with your family tonight','Turn off background noise today and listen']},
+ {t:'The cross',a:'Isaiah 53:5',r:[['Isaiah 53','ISA.53'],['Mark 15','MRK.15']],
+  q:["Isaiah 53:4–6 is full of he and our. Mark who did what to whom. What do you notice?", "Isaiah 53:10 says it was the Lord’s will to crush Him. How do you hold that together with God’s love?", "In Mark 15:34 Jesus cries out asking why God has forsaken Him. What does that moment show about what sin costs and what Jesus bore?", "Isaiah 53:6 says we have all gone astray like sheep. Where do you still minimize your sin, as if the cross were for worse people?", "The centurion watched how Jesus died and confessed who He was (Mark 15:39). How should the cross shape how you treat the people closest to you today?"],
+  h:['Thank Jesus specifically for what He took on for you','Explain to your oldest, simply, why Jesus died','Take the hard part for someone today: the blame, the task, the inconvenience','Share the gospel with someone this week']},
+ {t:'New mercies',a:'Lamentations 3:22–23',r:[['Lamentations 3','LAM.3'],['Romans 8','ROM.8']],
+  q:["Lamentations 3:1–20 is full of despair. Where exactly does it turn (3:21), and what does the writer call to mind?", "Romans 8:18 compares present sufferings with future glory. What does Paul mean that they aren’t worth comparing?", "Romans 8:31–39 asks a series of questions. What answers does Paul give about God’s love?", "Is there a failure, season, or fear you keep living under, even though Romans 8:1 says there is no condemnation?", "His mercies are new every morning (Lamentations 3:22–23). What would it look like to receive today as a fresh start with God and your family?"],
+  h:['Start fresh with someone you struggled with yesterday','Tell your wife one way God has been faithful to your family','Encourage someone in a hard season','Write Romans 8:1 on a card and keep it with you']},
+ {t:'Living changed',a:'2 Corinthians 5:17',r:[['2 Corinthians 5','2CO.5'],['Romans 6','ROM.6']],
+  q:["In 2 Corinthians 5:14–21, what does Paul say compels him, and what ministry has God given us?", "Romans 6:1–4 uses baptism to explain union with Christ. What died, and what was raised?", "2 Corinthians 5:21 describes a great exchange. What did Jesus take from you, and what did He give you?", "Romans 6:12 says don’t let sin reign. What sin still acts like it’s in charge, and what lie does it tell you?", "You are an ambassador for Christ (5:20). What would representing Him well look like at work today and at home tonight?"],
+  h:['Break one bad habit for today and ask God for strength','Tell someone how Jesus has changed you','Do something today the old you wouldn’t have done','Ask your wife what change she has seen in you, and thank God for it']}
+];
+
+// Daily ways to love your wife (free, one per day, rotating)
+const WIFE = [
+ 'Write a short note naming three ways you see Jesus in her, and leave it where she’ll find it today.',
+ 'Pray out loud for her by name tonight, for something specific she’s carrying right now.',
+ 'Take the next middle-of-the-night wake-up with {baby} so she can sleep, without being asked.',
+ 'Tell her one specific thing she did as a mom today that you admired.',
+ 'Text her midday: “I thank God for you because…” and finish it with something specific.',
+ 'Do one chore she usually does, and don’t mention it.',
+ 'Ask her, “What’s one thing I can take off your plate this week?” Then do it.',
+ 'Give her 30 minutes completely alone. Take both kids out of the house or to another room.',
+ 'At dinner, phone in another room, ask about her day and follow up with two more questions.',
+ 'Thank her in front of {big} for something she does for your family.',
+ 'Read a psalm aloud together before bed.',
+ 'Ask how you can pray for her, pray right then, and ask about it again tomorrow.',
+ 'Apologize for something specific, without adding a “but.”',
+ 'Plan a free at-home date after the kids are asleep: candles, a snack you already have, and real conversation.',
+ 'Write down her prayer request and pray it every day this week.',
+ 'Speak a blessing over her tonight, using Numbers 6:24–26 as your guide in your own words.',
+ 'Brag about her to a friend or family member, and let her see the message.',
+ 'Hold her hand on a stroller walk around the block.',
+ 'Make her coffee or tea exactly how she likes it, and bring it to her.',
+ 'Ask how she’s really doing, body and heart, in this postpartum season. Listen without fixing.',
+ 'Let her sleep in. You handle the morning with both kids.',
+ 'Tell her a favorite memory from when you were dating and why you’d choose her again.',
+ 'Clean the kitchen completely after dinner while she sits down.',
+ 'Set up a quiet bath or shower for her while you handle the kids.',
+ 'Read Proverbs 31:10–31 and thank God for specific ways she reflects it.',
+ 'Ask about a dream she has and one step you could take to help her toward it.',
+ 'Ask what God has been showing her lately, and share what He’s been showing you.',
+ 'When you see her after work, hug her and hold it for a full ten seconds.',
+ 'Tell her she’s beautiful, and name something about her character too.',
+ 'Handle {big}’s bedtime start to finish tonight.',
+ 'Clean out and vacuum her car.',
+ 'Write a list of ten things you love about her and give it to her.',
+ 'Ask, “How can I love you better this week?” Write the answer down and act on it.',
+ 'Speak well of her to others today, especially when she isn’t around.',
+ 'Fold and put away a full load of laundry.',
+ 'Record a voice memo of you praying for her, and send it.',
+ 'Take photos of her with the kids today. Moms are rarely in the pictures.',
+ 'Give her a shoulder rub tonight with no expectations.',
+ 'Turn off the TV and just sit with her at the end of the day.',
+ 'Serve her plate first at dinner and refill her drink.',
+ 'Ask her opinion on a decision you’re facing, and tell her why it matters to you.',
+ 'Text her a verse reference from your quiet time and why it made you think of her.',
+ 'When you notice she’s tired, say, “I’ve got this. Go rest,” and mean it.',
+ 'Get everything ready for Sunday morning the night before so she isn’t rushing.',
+ 'Make the bed and tidy your room before she gets to it.',
+ 'Every time she talks to you today, put your phone face down and look at her.',
+ 'Pray with her tonight before she falls asleep.',
+ 'Thank her for something unseen: meal planning, night feedings, remembering every appointment.',
+ 'Watch her favorite show with her tonight. Her pick, no commentary.',
+ 'Make her breakfast this morning.',
+ 'Help {big} make Mom a card or drawing, and deliver it together.',
+ 'Write her a letter she can open on a hard day.',
+ 'Ask her what made her laugh today, and try to make her laugh tonight.',
+ 'No complaining, sarcasm, or criticism toward her today. Replace each one with thanks.',
+ 'Tell her one way she makes your house feel like home.',
+ 'Block out time this week for her to exercise, read, or see a friend, and cover the kids.',
+ 'Ask which way she feels most loved right now: words, time, help, touch, or a small gift. Then do it.',
+ 'Reset the living room and pick up toys before she gets to it tonight.',
+ 'Say “I love you” first thing this morning, before anything else.',
+ 'Give up one comfort today, and every time you miss it, pray for her.'
+];
+
+// Lockdown / family-time challenges
+const KIDS_BIG = [
+ 'Build a blanket fort with {big} and read a book inside by flashlight.',
+ 'Set up a living room obstacle course and time {big} running it.',
+ 'Three-song dance party in the kitchen.',
+ 'Let {big} be your helper making dinner.',
+ 'Ask {big} about the best part and the hardest part of today, then pray about both together.',
+ 'Draw together: {big} draws something and you guess what it is, then switch.',
+ 'Teach {big} a short Bible verse with hand motions.',
+ 'Five rounds of hide-and-seek.',
+ 'Bath time with silly voices and a boat race.',
+ 'Go outside and find five things God made, each a different color.',
+ 'Let {big} “read” a story to {baby}.',
+ 'Make up a bedtime story where {big} is the hero who helps someone.',
+ 'Gentle wrestling or a pillow fight on the bed.',
+ 'Play I Spy at dinner.',
+ 'Two minutes of tickle monster.',
+ 'Give {big} a big-sibling job, then brag about it to Mom.',
+ 'Paper airplane contest down the hallway.',
+ 'Sidewalk chalk on the driveway or porch.',
+ 'Play {big}’s favorite game, by {big}’s rules.',
+ 'Ask {big}, “What do you think heaven is like?” and just listen.',
+ 'Act out the story of David and Goliath together.',
+ 'Work a puzzle together on the floor.',
+ 'Lie outside on a blanket and look for stars or shapes in the clouds.',
+ 'Write {big} a note that says “I love you because…” and read it aloud.',
+ 'Build something together from blocks or cardboard boxes.'
+];
+const KIDS_BABY = [
+ 'Tummy time on your chest while you talk to {baby}.',
+ '15 minutes of skin-to-skin with {baby}.',
+ 'Sing a hymn or worship song while rocking {baby}.',
+ 'Narrate everything you’re doing to {baby} in a calm voice.',
+ 'Do {baby}’s bath and bedtime routine tonight.',
+ 'Take {baby} on a stroller walk so Mom gets a real break.',
+ 'Pray over {baby} out loud: for health, for faith, for their future.',
+ 'Slow dance with {baby} to worship music.',
+ 'Mirror time: hold {baby} up to a mirror and make faces together.',
+ 'Gentle baby massage after bath time.',
+ 'Handle burping and settling after the next feeding.',
+ 'Hold {baby} through an entire fussy stretch so Mom can sit down.'
+];
+const KIDS_ALL = [
+ 'Family dinner with no devices. Everyone shares a high and a low.',
+ 'Family walk after dinner, everyone outside together.',
+ 'Family worship: one song, one verse, one prayer.',
+ 'Pray for each person in the family by name at bedtime.',
+ 'Take a family photo, even a silly one.',
+ 'Look through old photos and tell {big} stories from before they were born.',
+ 'Kitchen dance party with {baby} in your arms.',
+ 'Read a short psalm aloud at the dinner table.',
+ 'Once the kids are down, play a card or board game with {wife}.',
+ 'Everyone says one thing they love about someone else at the table.',
+ 'Make a simple dessert together from what’s in the pantry.',
+ 'Sit on the porch together and talk about one thing God did today.'
+];
+
+const QLAB = ['Observe','Understand','See God','Search your heart','Respond'];
+const VERSIONS = [['1713','CSB'],['59','ESV'],['111','NIV'],['116','NLT'],['114','NKJV'],['1','KJV']];
+
+const PAL = {
+ lake:{n:'Lake',l:{w0:'#e9f2ff',w1:'#6aa8ff',w2:'#a6dcff',w3:'#8f8cff',accent:'#2563eb'},d:{w0:'#0b1224',w1:'#1f4fa8',w2:'#145a73',w3:'#3d3899',accent:'#86b6ff'}},
+ sunrise:{n:'Sunrise',l:{w0:'#fff0e8',w1:'#ff9a76',w2:'#ffd0a6',w3:'#d9b6ff',accent:'#d9452a'},d:{w0:'#1c1113',w1:'#a9412a',w2:'#7a3b2a',w3:'#563788',accent:'#ff8f6e'}},
+ meadow:{n:'Meadow',l:{w0:'#ebf8ef',w1:'#6fd3a0',w2:'#c8efb2',w3:'#7cc8d6',accent:'#137a50'},d:{w0:'#0b1912',w1:'#1d7550',w2:'#3a6828',w3:'#1b5b6a',accent:'#62d7a0'}},
+ dusk:{n:'Dusk',l:{w0:'#f3edfc',w1:'#b18cff',w2:'#ffb5d2',w3:'#7d8eff',accent:'#6d28d9'},d:{w0:'#130e21',w1:'#5a2ea6',w2:'#86305d',w3:'#2a398c',accent:'#bba0ff'}},
+ citrus:{n:'Citrus',l:{w0:'#fffbe6',w1:'#ffd24d',w2:'#ffa05c',w3:'#ff93b4',accent:'#b4410c'},d:{w0:'#1b160a',w1:'#9c7612',w2:'#a0471c',w3:'#8c2e54',accent:'#ffc451'}},
+ graphite:{n:'Graphite',l:{w0:'#eef0f3',w1:'#b6bfcc',w2:'#dde2e8',w3:'#97a4b7',accent:'#2f3b4f'},d:{w0:'#0d0e11',w1:'#3a404b',w2:'#20242c',w3:'#4b5466',accent:'#d0d8e4'}}
+};
+
+const DEFAULTS = {name:'',wife:'',big:'',baby:'',palette:'lake',wall:'waves',mode:'auto',bible:'1713',rest:60,water:120,fastStart:'12:00',fastEnd:'20:00',cal:0,
+  lock:[{s:'17:15',e:'20:30'},{s:'22:00',e:'04:00'}]};
+
+/* ---------- Built-in food list (approximate calories). Ask Claude to add more. ---------- */
+const CHAINS={cfa:['chick fil a','chickfila','chik fil a','chick fila','cfa'],mcd:['mcdonalds','mcdonald','mcd','mickey ds'],sonic:['sonic'],tb:['taco bell'],chip:['chipotle'],wb:['whataburger','whata burger'],canes:['raising canes','canes'],wendys:['wendys'],sub:['subway'],sbux:['starbucks','sbux'],panera:['panera'],pop:['popeyes'],panda:['panda express','panda'],braums:['braums']};
+const CHAIN_SIG={cfa:'chicken sandwich',wb:'burger',canes:'box combo',sonic:'cheeseburger',sub:'sub',braums:'cheeseburger'};
+const FOODS=[
+['cfa','spicy deluxe',550],['cfa','deluxe|deluxe sandwich',500],['cfa','spicy chicken sandwich|spicy sandwich',450],['cfa','grilled chicken sandwich|grilled sandwich',390],['cfa','grilled chicken club|grilled club',520],['cfa','chicken sandwich|original sandwich|sandwich',440],
+['cfa','grilled nuggets|grilled nugget',16,{u:8}],['cfa','nuggets|nugget',31,{u:8}],['cfa','strips|strip|chick n strips|tenders',103,{u:3}],['cfa','waffle fries|waffle fry|fries',420,{z:[320,420,560]}],['cfa','mac and cheese|mac n cheese|mac',450,{z:[280,450,550]}],
+['cfa','cobb salad',820],['cfa','market salad',550],['cfa','spicy southwest salad',680],['cfa','chicken biscuit',460],['cfa','chick n minis|minis',90,{u:4}],['cfa','hash browns|hashbrowns',270],['cfa','egg white grill',300],['cfa','chicken noodle soup',170],['cfa','fruit cup',60],['cfa','side salad',160],
+['cfa','chick fil a sauce|cfa sauce|sauce',140],['cfa','polynesian sauce',110],['cfa','ranch',140],['cfa','diet lemonade',50,{z:[35,50,70]}],['cfa','frosted lemonade',330],['cfa','lemonade',220,{z:[160,220,300]}],['cfa','sweet tea',120,{z:[90,120,170]}],['cfa','unsweet tea|unsweetened tea',0],['cfa','milkshake|shake',600],
+['mcd','big mac',590],['mcd','double quarter pounder',740],['mcd','quarter pounder with cheese|quarter pounder|qpc',520],['mcd','mcdouble',400],['mcd','double cheeseburger',450],['mcd','cheeseburger',300],['mcd','hamburger',250],['mcd','mcchicken',400],['mcd','filet o fish|fillet o fish|fish sandwich',390],
+['mcd','mcnuggets|mcnugget|nuggets|nugget',42,{u:10}],['mcd','fries|french fries',320,{z:[230,320,480]}],['mcd','egg mcmuffin',310],['mcd','sausage mcmuffin with egg|sausage egg mcmuffin',480],['mcd','sausage mcmuffin',400],['mcd','sausage biscuit',460],['mcd','bacon egg and cheese biscuit',450],['mcd','hotcakes',580],['mcd','hash brown|hashbrown',140],['mcd','mcflurry',510],['mcd','cone|vanilla cone',200],['mcd','apple pie',230],['mcd','coke|coca cola|sprite|dr pepper',200,{z:[150,200,290]}],['mcd','sweet tea',150,{z:[100,150,210]}],
+['sonic','double cheeseburger|sonic double',990],['sonic','cheeseburger|burger',710],['sonic','chili cheese coney|coney',400],['sonic','corn dog',230],['sonic','chili cheese tots',520],['sonic','tots|tater tots',380,{z:[220,380,550]}],['sonic','fries',350,{z:[250,350,470]}],['sonic','onion rings',560,{z:[430,560,800]}],['sonic','popcorn chicken',380],['sonic','chicken strips|strips',140,{u:3}],['sonic','breakfast burrito',490],['sonic','cherry limeade',230,{z:[170,230,330]}],['sonic','limeade',200,{z:[150,200,280]}],['sonic','sonic blast|blast',740],['sonic','shake',650],
+['tb','crunchy taco|taco',170],['tb','soft taco',180],['tb','doritos locos taco|doritos taco',170],['tb','burrito supreme',390],['tb','bean burrito',350],['tb','cheesy bean and rice burrito',420],['tb','beefy 5 layer|5 layer burrito',490],['tb','crunchwrap supreme|crunchwrap',530],['tb','chalupa supreme|chalupa',360],['tb','cheesy gordita crunch|gordita',500],['tb','chicken quesadilla|quesadilla',520],['tb','nachos bellgrande|nachos bell grande',740],['tb','chips and cheese|nachos',220],['tb','mexican pizza',540],['tb','cinnamon twists',170],['tb','baja blast',290,{z:[220,290,390]}],
+['chip','burrito bowl|bowl',700],['chip','burrito',1000],['chip','tacos|taco',190,{u:3}],['chip','salad',550],['chip','quesadilla',1000],['chip','chips and guac|chips and guacamole',770],['chip','chips and queso',660],['chip','chips',540],['chip','guacamole|guac',230],['chip','queso',240],
+['wb','triple meat',1100],['wb','double meat',870],['wb','burger|whataburger jr',590],['wb','patty melt',950],['wb','honey butter chicken biscuit',590],['wb','whatachick n|chicken sandwich',580],['wb','chicken strips|strips',133,{u:3}],['wb','breakfast on a bun',530],['wb','taquito',400],['wb','fries',400,{z:[270,400,520]}],['wb','onion rings',420,{z:[290,420,600]}],['wb','shake',700],
+['canes','box combo|box',1350],['canes','3 finger combo|three finger combo|3 finger',1120],['canes','caniac',1750],['canes','fingers|finger|tenders|tender|strips',130,{u:3}],['canes','canes sauce|sauce',190],['canes','texas toast|toast',150],['canes','crinkle fries|fries',390],['canes','coleslaw|slaw',100],['canes','lemonade',230,{z:[230,320,450]}],
+['wendys','son of baconator',620],['wendys','baconator',950],['wendys','daves triple|triple',1160],['wendys','daves double|double',860],['wendys','daves single|dave single|single',590],['wendys','jr bacon cheeseburger|jbc',380],['wendys','jr cheeseburger',290],['wendys','spicy chicken sandwich|spicy chicken',490],['wendys','nuggets|nugget',45,{u:10}],['wendys','fries',350,{z:[260,350,470]}],['wendys','frosty',340,{z:[340,460,610]}],['wendys','baked potato',270],['wendys','chili',250,{z:[170,250,370]}],
+['sub','turkey|oven roasted turkey',280],['sub','italian bmt|bmt',400],['sub','meatball marinara|meatball',480],['sub','spicy italian',450],['sub','sweet onion chicken teriyaki|chicken teriyaki',330],['sub','tuna',450],['sub','steak and cheese|philly',350],['sub','veggie delite|veggie',200],['sub','ham',270],['sub','club',310],['sub','cookie',210],['sub','sub|sandwich',350],
+['sbux','white mocha',430,{z:[300,430,530]}],['sbux','caramel macchiato',250,{z:[180,250,320]}],['sbux','mocha',370,{z:[250,370,450]}],['sbux','chai latte|chai',240,{z:[180,240,320]}],['sbux','latte',190,{z:[130,190,250]}],['sbux','frappuccino|frap',380,{z:[270,380,500]}],['sbux','vanilla sweet cream cold brew|sweet cream cold brew',110,{z:[70,110,200]}],['sbux','cold brew',5],['sbux','iced coffee',80,{z:[60,80,120]}],['sbux','pink drink|refresher',140,{z:[100,140,190]}],['sbux','americano',15],['sbux','egg bites',300],['sbux','bacon gouda',360],['sbux','impossible breakfast sandwich',420],['sbux','croissant',260],['sbux','blueberry muffin|muffin',360],['sbux','banana bread|loaf',420],['sbux','cake pop',160],['sbux','protein box',470],
+['panera','bread bowl',900],['panera','broccoli cheddar soup|broccoli cheddar',360,{z:[230,360,360]}],['panera','chicken noodle soup',160],['panera','mac and cheese|mac',470],['panera','frontega chicken|frontega',730],['panera','turkey sandwich|turkey',520],['panera','caesar salad|caesar',330],['panera','cinnamon crunch bagel',430],['panera','bagel',290],
+['pop','spicy chicken sandwich|chicken sandwich|sandwich',700],['pop','tenders|strips',150,{u:3}],['pop','pieces of chicken|chicken|piece',300,{u:2}],['pop','cajun fries|fries',270,{z:[270,500,740]}],['pop','biscuit',260],['pop','red beans and rice',250],['pop','mashed potatoes',110],
+['panda','orange chicken',490],['panda','beijing beef',470],['panda','broccoli beef',150],['panda','kung pao chicken|kung pao',290],['panda','honey walnut shrimp',360],['panda','grilled teriyaki chicken|teriyaki chicken',300],['panda','string bean chicken',190],['panda','chow mein',510],['panda','fried rice',520],['panda','white rice|steamed rice',380],['panda','super greens',90],['panda','egg roll',200],['panda','cream cheese rangoons|rangoons|rangoon',63,{u:3}],['panda','plate',1000],['panda','bowl',740],
+['braums','cheeseburger|burger',560],['braums','ice cream cone|cone',260],['braums','shake|malt',700],['braums','fries',380],
+['','eggs|scrambled eggs',72,{u:2}],['','egg|fried egg|boiled egg|hard boiled egg',72,{u:1}],['','omelet|omelette',350],['','bacon',45,{u:3,n:'slices of bacon'}],['','sausage links|sausage link',80,{u:2}],['','sausage patty|sausage',190],['','toast',80,{u:2,n:'slices of toast'}],['','bread',80,{u:1,n:'slice of bread'}],['','butter',100],['','oatmeal|oats',160],['','cereal',220],['','milk',120,{z:[60,120,180]}],
+['','banana',105],['','apple',95],['','orange',60],['','strawberries|blueberries|berries',70],['','grapes',100],['','greek yogurt|yogurt',140],['','protein shake|protein drink|shake',160],['','protein bar',210],['','peanut butter',190],['','pb and j|pbj|peanut butter and jelly',380],
+['','turkey sandwich',380],['','ham sandwich',360],['','chicken sandwich',450],['','grilled cheese',400],['','sandwich',400],['','wrap',450],['','cheeseburger',550],['','hamburger|burger',500],['','hot dog|hotdog',290],
+['','chicken breast|grilled chicken|chicken',280],['','fried chicken',300,{u:2,n:'pieces of fried chicken'}],['','chicken tenders|chicken strips|tenders',120,{u:3}],['','chicken nuggets|nuggets',48,{u:6}],['','chicken wings|wings',90,{u:6}],['','steak',550],['','salmon',350],['','tilapia|fish',220],['','shrimp',120],['','ground beef|taco meat',290],['','pork chop',300],['','ribs',700],['','meatloaf',380],['','pot roast|roast',350],
+['','white rice|rice',205],['','brown rice',215],['','fried rice',350],['','pasta|noodles',220],['','spaghetti',600],['','lasagna',600],['','mac and cheese|mac n cheese',350],['','mashed potatoes',210],['','baked potato|potato',160],['','sweet potato',115],['','french fries|fries',365,{z:[230,365,500]}],['','tater tots|tots',300],
+['','side salad|garden salad|salad',150],['','caesar salad',350],['','chicken salad',450],['','ranch|dressing',130],['','tortilla chips|chips',150],['','salsa',20],['','queso',100],['','guacamole|guac',110],['','avocado',240],['','broccoli',55],['','green beans',40],['','corn',130],['','carrots',50],['','vegetables|veggies',60],['','black beans|pinto beans|beans',230],
+['','burrito',650],['','tacos',200,{u:2}],['','taco',200,{u:1}],['','quesadilla',500],['','nachos',600],['','enchiladas|enchilada',300,{u:2}],['','slices of pizza|slice of pizza|pizza slices|pizza slice|pizza',285,{u:2,n:'slices of pizza'}],
+['','soup',200],['','chili',300],['','ramen',380],['','sushi roll|sushi',300],['','pancakes|pancake',90,{u:3}],['','syrup',100],['','waffles|waffle',220],['','french toast',150,{u:2,n:'slices of French toast'}],['','biscuits and gravy|biscuit and gravy',550],['','biscuit',200],['','muffin',400],['','bagel',280],['','cream cheese',100],['','donuts|donut|doughnut',260,{u:1}],
+['','granola bar',120],['','granola',200],['','bag of chips|chip bag',150],['','popcorn',150],['','pretzels',110],['','crackers',130],['','string cheese|cheese stick',80],['','cheese',110],['','almonds|cashews|peanuts|nuts',170],['','trail mix',170],['','hummus',70],
+['','cookies|cookie',150,{u:1}],['','brownie',230],['','cake',350],['','pie',350],['','ice cream',270],['','candy bar|chocolate bar',230],['','chocolate',150],
+['','coffee with creamer|creamer',60],['','black coffee|coffee',5],['','latte',190,{z:[130,190,250]}],['','diet coke|diet soda|coke zero|diet dr pepper|diet pepsi|zero sugar',0],['','soda|coke|pepsi|dr pepper|sprite|mountain dew|root beer',150,{z:[150,200,300]}],['','sweet tea',160],['','unsweet tea|unsweetened tea|tea',0],['','orange juice|juice',110],['','lemonade',150],['','smoothie',300],['','milkshake',600],['','beer',150],['','glass of wine|wine',125],['','celsius',10],['','red bull|monster|energy drink',110],['','gatorade|sports drink',140],['','sparkling water|la croix|water',0]
+];
+const PROTEIN=new Set(['chicken','chicken breast','grilled chicken','steak','ground beef','fish','shrimp','salmon','ham']);
+const NUMW={a:1,an:1,one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,eleven:11,twelve:12,half:.5,couple:2,few:3,dozen:12};
+const reEsc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const wordRe=(k,flags)=>new RegExp('(^|[^a-z0-9])('+reEsc(k).replace(/ /g,'\\s+')+')(e?s)?(?=$|[^a-z0-9])',flags);
+const KEYS=[];FOODS.forEach(f=>{const ks=f[1].split('|');ks.forEach(k=>KEYS.push({k,f,canon:(f[3]&&f[3].n)||ks[0],re:wordRe(k,'g')}))});
+const GLUE=[...new Set(KEYS.map(x=>x.k).filter(k=>/\b(and|with)\b/.test(k)))].sort((a,b)=>b.length-a.length);
+const ALIASES=Object.entries(CHAINS).flatMap(([c,a])=>a.map(x=>({c,x,re:wordRe(x,'g')}))).sort((a,b)=>b.x.length-a.x.length);
+const STOP=new Set(('a an the some of with and i had ate for my lunch dinner breakfast snack meal combo plus large medium small regular kids tall grande venti trenta cup bowl big extra xl lg med sm side order orders piece pieces pc pcs count ct slice slices serving servings glass can bottle few couple half also just like about around oz ounce ounces footlong foot long inch inches no light on breast thigh grilled fried baked roasted spicy hot iced homemade plain original classic fresh little bit bites sweet diet zero sugar free unsweet unsweetened today tonight earlier then from at w x').split(' '));
+function normFood(t){return ' '+String(t||'').toLowerCase().replace(/[’'`]/g,'').replace(/&/g,' and ').replace(/w\//g,' with ').replace(/[-_]/g,' ').replace(/[^a-z0-9.\s,;+\n]/g,' ').replace(/\.(?!\d)/g,',').replace(/[ \t]+/g,' ')+' '}
+function sizeIdx(s){if(/\b(small|sm|kids|tall|cup|snack)\b/.test(s))return 0;if(/\b(large|lg|venti|trenta|big|xl)\b/.test(s))return 2;if(/\b(medium|med|regular|grande|bowl)\b/.test(s))return 1;return -1}
+function qtyBefore(s){let b=s.replace(/\s+$/,'');if(/(^|\s)half\s+(a|an)$/.test(b))return .5;
+  for(let i=0;i<3;i++)b=b.replace(/\s(small|medium|large|regular|kids|tall|grande|venti|trenta|big|xl|lg|med|sm|extra|spicy|grilled|fried|scrambled|hard|boiled|plain|original|cup|bowl)$/,'');
+  b=b.replace(/\s(slices?|cups?|bowls?|pieces?|orders?|servings?|scoops?|glass(es)?|cans?|bottles?|sticks?)\s+of$/,'').replace(/\s(pc|pcs|piece|pieces|count|ct)$/,'');
+  const m=b.match(/(?:^|\s)(\d+(?:\.\d+)?|a|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|half|couple|few|dozen)$/);if(!m)return null;return isNaN(+m[1])?NUMW[m[1]]:+m[1]}
+const fmtN=n=>n%1?String(+n.toFixed(1)):String(n);
+function estimateLocal(text){
+  let t=normFood(text);
+  GLUE.forEach(g=>{t=t.replace(wordRe(g,'g'),(m0,p,k,s)=>p+k.replace(/\s+/g,'_')+(s||''))});
+  let gchain=null;for(const A of ALIASES){A.re.lastIndex=0;if(A.re.test(t)){gchain=A.c;break}}
+  const segs=t.split(/[,;\n+]|\band\b|\bwith\b|\bplus\b|\balso\b|\bthen\b/).map(s=>' '+s.replace(/_/g,' ').trim()+' ').filter(s=>s.trim());
+  const items=[];let mealSeen=false,friesSeen=false,hitChain=null;
+  for(const seg of segs){
+    let chain=gchain,s=seg;
+    for(const A of ALIASES){A.re.lastIndex=0;if(A.re.test(s)){chain=A.c;A.re.lastIndex=0;s=s.replace(A.re,'$1 ')}}
+    if(/\b(meal|combo)\b/.test(s)&&!/\bcombo\b.*\b(box|finger)\b|\b(box|finger)\b.*\bcombo\b/.test(s))mealSeen=true;
+    const cands=[];
+    for(const K of KEYS){const fc=K.f[0];if(fc&&chain&&fc!==chain)continue;if(!fc&&chain&&PROTEIN.has(K.k))continue;K.re.lastIndex=0;let m;
+      while((m=K.re.exec(s))){const st=m.index+m[1].length,en=st+m[2].length+(m[3]||'').length;cands.push({K,st,en,score:K.k.length*10+(fc?(fc===chain?5:0):(chain?1:3))});K.re.lastIndex=en}}
+    cands.sort((a,b)=>b.score-a.score);const used=[],picks=[];
+    for(const c of cands){if(used.some(u=>c.st<u[1]&&c.en>u[0]))continue;used.push([c.st,c.en]);picks.push(c)}
+    if(picks.length>1){for(let i=picks.length-1;i>=0;i--){if(picks.length>1&&!picks[i].K.f[0]&&PROTEIN.has(picks[i].K.k))picks.splice(i,1)}}
+    let rest=s;used.forEach(([a,b])=>{rest=rest.slice(0,a)+' '.repeat(b-a)+rest.slice(b)});
+    const left=rest.split(/\s+/).filter(w=>w&&!STOP.has(w)&&!/^\d/.test(w)&&w.length>1&&!(w in NUMW));
+    if(!picks.length&&!left.length&&chain&&CHAIN_SIG[chain]){const K=KEYS.find(k=>k.f[0]===chain&&k.k===CHAIN_SIG[chain]);if(K)picks.push({K,st:s.length,en:s.length})}
+    picks.sort((a,b)=>a.st-b.st);
+    for(const c of picks){const f=c.K.f,o=f[3]||{};if(f[0]&&!hitChain)hitChain=f[0];
+      const before=s.slice(0,c.st),near=s.slice(Math.max(0,c.st-24),Math.min(s.length,c.en+12));
+      let q=/\d/.test(c.K.k)?null:qtyBefore(before);const af=s.slice(c.en).match(/^\s*x\s*(\d+)/);if(af)q=+af[1];
+      const zi=sizeIdx(near);let base=f[2],label='';
+      if(o.z){const i=zi<0?1:zi;base=o.z[i];label=['Small','Medium','Large'][i]+' '}
+      else if(!f[0]&&!o.u){if(zi===0)base*=.75;if(zi===2)base*=1.3}
+      let cal,nm;
+      if(o.u){const n=q??o.u;cal=f[2]*n;nm=`${fmtN(n)} ${c.K.canon}`}
+      else{cal=base*(q??1);nm=(q===.5?'Half ':q&&q!==1?`${fmtN(q)} × `:'')+label+c.K.canon}
+      if(f[0]==='sub'&&/\b(footlong|foot long|12 inch)\b/.test(seg)){cal*=2;nm='Footlong '+nm}
+      if(/fries/.test(c.K.canon))friesSeen=true;
+      items.push({name:cap(nm.trim()),cal:Math.round(cal)})}
+    if(left.length&&(!picks.length||left.length>=2))items.push({name:cap(left.join(' ')),cal:null});
+  }
+  let note='';
+  const mc=gchain||hitChain;if(mealSeen&&mc&&!friesSeen){const F=FOODS.find(f=>f[0]===mc&&/fries/.test(f[1]));if(F){const o=F[3]||{};items.push({name:'Medium '+F[1].split('|')[0]+' (meal)',cal:o.z?o.z[1]:F[2]});note='Meal counted with medium fries. Add your drink if it had calories.'}}
+  return{items,note};
+}
+
+/* ============================================================
+   APP
+   ============================================================ */
+const LK='steadfast-v1';
+const LOGO=`<svg width="36" height="36" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="kL"><rect width="1024" height="1024" rx="228"/></clipPath><linearGradient id="sL" gradientUnits="userSpaceOnUse" x1="676" y1="236" x2="348" y2="800"><stop offset="0" stop-color="#ff9a1f"/><stop offset=".5" stop-color="#ff5a3c"/><stop offset="1" stop-color="#ff2e8a"/></linearGradient><radialGradient id="rL" cx="512" cy="520" r="460" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ff3d6e" stop-opacity=".30"/><stop offset="1" stop-color="#ff3d6e" stop-opacity="0"/></radialGradient><filter id="fL" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="28"/></filter></defs><g clip-path="url(#kL)"><rect width="1024" height="1024" fill="#000"/><rect width="1024" height="1024" fill="url(#rL)"/><path d="M676 236L364 486L660 552L348 800" fill="none" stroke="url(#sL)" stroke-width="132" stroke-linecap="round" stroke-linejoin="round" filter="url(#fL)" opacity=".55"/><path d="M676 236L364 486L660 552L348 800" fill="none" stroke="url(#sL)" stroke-width="132" stroke-linecap="round" stroke-linejoin="round"/></g></svg>`;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+
+const ICON={
+ home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+ book:'<path d="M12 6.5C10 5 7 4.5 3 5v13c4-.5 7 0 9 1.5 2-1.5 5-2 9-1.5V5c-4-.5-7 0-9 1.5z"/><path d="M12 6.5V19"/>',
+ dumb:'<path d="M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11"/>',
+ heart:'<path d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/>',
+ food:'<path d="M7 3v8M4.5 3v5a2.5 2.5 0 0 0 5 0V3M7 11v10M17.5 3c-2 0-3.5 2.5-3.5 6.5 0 2.5 1.5 3.5 3.5 3.5V21"/>',
+ kids:'<circle cx="9" cy="7" r="3"/><path d="M3.5 20c0-3.2 2.4-5.8 5.5-5.8s5.5 2.6 5.5 5.8"/><circle cx="17.5" cy="10.5" r="2.2"/><path d="M15.8 20c.1-2.4 1.4-4.2 3.4-4.2.9 0 1.7.3 2.3.9"/>',
+ drop:'<path d="M12 3s6 6.6 6 11.2a6 6 0 0 1-12 0C6 9.6 12 3 12 3z"/>',
+ lock:'<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+ unlock:'<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 7.6-1.7"/>',
+ moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+ ext:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+ play:'<path d="M7 5l12 7-12 7z" fill="currentColor"/>',
+ pause:'<path d="M8 5v14M16 5v14"/>',
+ shuffle:'<path d="M3 7h3.5l9 10H21M3 17h3.5l2.6-2.9M14.9 9.9 15.5 7H21M18.5 4.5 21 7l-2.5 2.5M18.5 14.5 21 17l-2.5 2.5"/>',
+ spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/>',
+ sliders:'<path d="M4 7h9M18 7h2M4 17h3M12 17h8"/><circle cx="15.5" cy="7" r="2.4"/><circle cx="9.5" cy="17" r="2.4"/>',
+ check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+ x:'<path d="M6 6l12 12M18 6 6 18"/>',
+ walk:'<circle cx="13" cy="4.5" r="2"/><path d="M10 21l2-6 3 3v3M8 12l2-4.5 3.5 1 2.5 3.5M12 15l-1-4"/>',
+ chev:'<path d="M9 6l6 6-6 6"/>',
+ flame:'<path d="M12 3c1 3.2 5 5 5 10a5 5 0 0 1-10 0c0-2.4 1.2-3.8 2.4-4.8.1 2 1 3.3 2.3 3.3C11.7 8.6 11 6 12 3z"/>'
+};
+const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[n]}</svg>`;
+
+/* ---------- state ---------- */
+let S={settings:{...DEFAULTS},lifts:{},hist:{},days:{},updatedAt:0};
+let mealCalDraft='', editId=null, delArmed=false, planDay=1, planResetArmed=false;
+let tab='home', col=null, sampleFn=null, mealDraft='', wifeBusy=false, resetArmed=false;
+let dirtyDay=false, dirtyProf=false, saveT=null;
+
+function blankDay(){return {qt:{secs:0,run:null,done:false,hit:false,ans:{},honor:null,honorDone:false},wife:{done:false,off:0,fresh:null,peek:false},fam:{seed:0,done:[]},wo:{plan:null,sets:{},walk:false,sauna:false,done:false},water:0,meals:[],updatedAt:0}}
+function normDay(x){const b=blankDay();x=x||{};const d={...b,...x,qt:{...b.qt,...(x.qt||{})},wife:{...b.wife,...(x.wife||{})},fam:{...b.fam,...(x.fam||{})},wo:{...b.wo,...(x.wo||{})},meals:Array.isArray(x.meals)?x.meals:[]};d.meals.forEach(m=>{if(m.pending){m.pending=false}});if(!Array.isArray(d.fam.done))d.fam.done=[];return d}
+
+function keyOf(dt){return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')}
+function todayKey(){return keyOf(new Date())}
+function fromKey(k){const[y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d)}
+function dn(k=todayKey()){const[y,m,d]=k.split('-').map(Number);return Math.round(Date.UTC(y,m-1,d)/864e5)}
+function day(k=todayKey()){if(!S.days[k])S.days[k]=blankDay();return S.days[k]}
+
+function loadLocal(){try{const r=localStorage.getItem(LK);if(r){const o=JSON.parse(r);S.settings={...DEFAULTS,...(o.settings||{})};S.lifts=o.lifts||{};S.hist=o.hist||{};S.updatedAt=o.updatedAt||0;S.days={};for(const k in (o.days||{}))S.days[k]=normDay(o.days[k]);}}catch(e){}}
+function migrate(){if(!S.settings.v2){if(+S.settings.water===100)S.settings.water=120;S.settings.v2=true;dirtyProf=true}}
+function prune(){const t=dn();for(const k in S.days)if(t-dn(k)>21)delete S.days[k];for(const k in S.hist)if(t-dn(k)>120)delete S.hist[k]}
+function markDay(){const k=todayKey(),d=day(k);d.updatedAt=Date.now();S.hist[k]=flags(d,k);S.updatedAt=Date.now();dirtyDay=true;dirtyProf=true;schedule()}
+function markProf(){S.updatedAt=Date.now();dirtyProf=true;schedule()}
+function schedule(){clearTimeout(saveT);saveT=setTimeout(flush,700)}
+async function flush(){prune();try{localStorage.setItem(LK,JSON.stringify(S))}catch(e){}
+  if(!col)return;const k=todayKey();
+  try{
+    if(dirtyProf){dirtyProf=false;await col.doc('profile').set({settings:S.settings,lifts:S.lifts,hist:S.hist,updatedAt:S.updatedAt})}
+    if(dirtyDay){dirtyDay=false;await col.doc('day-'+k).set(JSON.parse(JSON.stringify(day(k))))}
+  }catch(e){}
+}
+
+async function initCloud(){
+  if(!(window.claude&&window.claude.use))return;
+  window.claude.use('sample').then(s=>{sampleFn=s||null;if(!isTyping()&&(tab==='family'||tab==='food'||tab==='quiet'))render()}).catch(()=>{});
+  try{
+    const [dbx,ux]=await Promise.all([window.claude.use('db'),window.claude.use('user')]);
+    if(!dbx||!ux)return;
+    const id=await ux.id(); if(!id)return;
+    const c=dbx.collection('data/users/'+id);
+    const p=await c.doc('profile').get();
+    if(p.exists){const x=p.data();if((x.updatedAt||0)>(S.updatedAt||0)){S.settings={...DEFAULTS,...(x.settings||{})};S.lifts=x.lifts||{};S.hist=x.hist||{};S.updatedAt=x.updatedAt||0}}
+    migrate();const k=todayKey();const dd=await c.doc('day-'+k).get();
+    if(dd.exists){const x=dd.data();if((x.updatedAt||0)>((S.days[k]||{}).updatedAt||0))S.days[k]=normDay(x)}
+    col=c;
+    try{localStorage.setItem(LK,JSON.stringify(S))}catch(e){}
+    applyTheme(); if(!isTyping())render();
+    if(dirtyDay||dirtyProf)schedule();
+  }catch(e){col=null}
+}
+
+/* ---------- helpers ---------- */
+const W=()=>S.settings.wife||'your wife';
+const BIG=()=>S.settings.big||'your oldest';
+const BABY=()=>S.settings.baby||'the baby';
+function fill(t){return esc(t).replace(/\{wife\}/g,esc(W())).replace(/\{big\}/g,esc(BIG())).replace(/\{baby\}/g,esc(BABY())).replace(/^(your|the) /,m=>cap(m))}
+function theme(k){return THEMES[dn(k)%THEMES.length]}
+function ver(){return VERSIONS.find(v=>v[0]===S.settings.bible)||VERSIONS[0]}
+function bibleUrl(code){const v=ver();return `https://www.bible.com/bible/${v[0]}/${code}.${v[1]}`}
+function toMin(t){const[h,m]=String(t||'0:0').split(':').map(Number);return (h||0)*60+(m||0)}
+function fmt12(t){let[h,m]=String(t).split(':').map(Number);const ap=h>=12?'PM':'AM';h=h%12||12;return m?`${h}:${String(m).padStart(2,'0')} ${ap}`:`${h} ${ap}`}
+function dur(min){const h=Math.floor(min/60),m=min%60;return h?(m?`${h}h ${m}m`:`${h}h`):`${m}m`}
+function mmss(s){s=Math.floor(s);return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`}
+function nowMin(){const n=new Date();return n.getHours()*60+n.getMinutes()}
+function isTyping(){const a=document.activeElement;return a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)}
+function qtSecs(d){return d.qt.secs+(d.qt.run?(Date.now()-d.qt.run)/1000:0)}
+function planDow(d){return d.wo.plan??new Date().getDay()}
+function workoutMet(d,k){const dow=fromKey(k).getDay();const p=PLAN[dow];if(p.rest)return true;if(p.walk)return !!d.wo.walk;return !!d.wo.done}
+function unlocked(d,k){return d.qt.done&&workoutMet(d,k)}
+function planCopy(){if(!S.settings.plan)S.settings.plan=JSON.parse(JSON.stringify(DEFAULT_PLAN));return S.settings.plan}
+function shortName(n){return (String(n||'Lift').split(/[\s,&]+/)[0]||'Lift').slice(0,6)}
+function planEditor(){const P=PLAN,pd=P[planDay],type=pd.rest?'rest':pd.walk?'walk':'lift';
+  return `<section class="card"><h3>Workout plan</h3><p class="muted small">Changes save as you type. Logged weights stay with each exercise name.</p>
+  <div class="chips" style="margin-top:10px">${[1,2,3,4,5,6,0].map(w=>`<button class="chip ${w===planDay?'on':''}" data-act="pe-day" data-v="${w}" aria-pressed="${w===planDay}"><b>${'SMTWTFS'[w]}</b><small>${esc(P[w].s||'')}</small></button>`).join('')}</div>
+  <div class="seg" style="margin-top:12px">${[['lift','Lift'],['walk','Walk'],['rest','Rest']].map(([v,l])=>`<button class="${type===v?'on':''}" data-act="pe-type" data-v="${v}">${l}</button>`).join('')}</div>
+  <label class="fstack"><span>Day name</span><input type="text" data-plan="name" value="${esc(pd.name)}"></label>
+  ${type==='lift'?`<div class="perow pehead"><span>Exercise</span><span>Sets</span><span>Reps</span><span></span></div>${pd.ex.map((e,i)=>`<div class="perow"><input type="text" data-plan="ex-name" data-i="${i}" value="${esc(e[0])}" aria-label="Exercise ${i+1} name"><input type="number" inputmode="numeric" min="1" max="10" data-plan="ex-sets" data-i="${i}" value="${e[1]}" aria-label="Exercise ${i+1} sets"><input type="text" data-plan="ex-target" data-i="${i}" value="${esc(e[2])}" aria-label="Exercise ${i+1} reps"><span class="peb"><button data-act="pe-up" data-v="${i}" aria-label="Move exercise ${i+1} up" ${i?'':'disabled'}>↑</button><button data-act="pe-del" data-v="${i}" aria-label="Remove exercise ${i+1}">✕</button></span></div>`).join('')}<div class="setacts"><button data-act="pe-add">+ Add exercise</button></div>`:`<p class="muted small" style="margin-top:10px">${type==='walk'?'Walk days ask for a 30+ minute walk, with sauna optional.':'Rest days keep your workout streak going.'}</p>`}
+  <button class="link" style="margin-top:12px" data-act="pe-reset">${planResetArmed?'Tap again to restore the starter plan':'Restore starter plan'}</button></section>`}
+function liftPlan(name,defSets){const L=S.lifts[name];if(!L)return{w:'',r:'',sets:defSets,up:0,last:null};
+  const P=L.day===todayKey()?L.prev:L;if(!P)return{w:'',r:'',sets:L.sets||defSets,up:0,last:null};
+  const pw=parseFloat(P.w);const up=(P.hit&&pw>0)?(pw<30?2.5:5):0;
+  return{w:pw>0?String(pw+up):(P.w||''),r:P.r||'',sets:P.sets||defSets,up,last:P}}
+function setsFor(d,pd,i){const ex=PLAN[pd].ex[i];return d.wo.n?.[`${pd}:${i}`]??liftPlan(ex[0],ex[1]).sets}
+function setCount(d,pd){const P=PLAN[pd];if(!P.ex)return[0,0];let t=0,n=0;P.ex.forEach((e,i)=>{const c=setsFor(d,pd,i);for(let j=0;j<c;j++){t++;if(d.wo.sets[`${pd}:${i}-${j}`]?.done)n++}});return[n,t]}
+function saveLift(d,pd,i){const[name,,target]=PLAN[pd].ex[i];const tn=parseInt(target)||0;const c=setsFor(d,pd,i);const tk=todayKey();
+  const ss=[];for(let j=0;j<c;j++)ss.push(d.wo.sets[`${pd}:${i}-${j}`]||{});const done=ss.filter(x=>x.done);if(!done.length)return;
+  const top=ss[0].done?ss[0]:done[0];const L=S.lifts[name];
+  const prev=L?(L.day===tk?L.prev:{w:L.w,r:L.r,sets:L.sets,hit:L.hit,day:L.day}):null;
+  S.lifts[name]={w:top.w||'',r:top.r||'',sets:c,hit:done.length===c&&done.every(x=>(parseFloat(x.r)||0)>=tn),day:tk,prev};markProf()}
+
+function lockState(){
+  const m=nowMin();let best=null;
+  for(const w of S.settings.lock){const s=toMin(w.s),e=toMin(w.e);const inW=s<e?(m>=s&&m<e):(m>=s||m<e);
+    if(inW)return{on:true,w,left:(e-m+1440)%1440,night:s>e||s>=21*60};
+    const until=(s-m+1440)%1440;if(!best||until<best.until)best={w,until}}
+  return{on:false,next:best};
+}
+function fastState(){const s=toMin(S.settings.fastStart),e=toMin(S.settings.fastEnd),m=nowMin();const open=s<e?(m>=s&&m<e):(m>=s||m<e);return{open,left:((open?e:s)-m+1440)%1440}}
+
+function famPicks(d){const n=dn(),sd=d.fam.seed;return[
+  {k:'b'+((n+sd)%KIDS_BIG.length),who:cap(BIG()),t:KIDS_BIG[(n+sd)%KIDS_BIG.length]},
+  {k:'y'+((n*3+sd)%KIDS_BABY.length),who:cap(BABY()),t:KIDS_BABY[(n*3+sd)%KIDS_BABY.length]},
+  {k:'a'+((n*7+sd)%KIDS_ALL.length),who:'Everyone',t:KIDS_ALL[(n*7+sd)%KIDS_ALL.length]}]}
+function wifeIdea(d){return d.wife.fresh||WIFE[(dn()+d.wife.off)%WIFE.length]}
+function calTotal(d){return d.meals.reduce((a,m)=>a+(Number(m.cal)||0),0)}
+function inWindow(ts){const dt=new Date(ts),m=dt.getHours()*60+dt.getMinutes(),s=toMin(S.settings.fastStart),e=toMin(S.settings.fastEnd);return s<e?(m>=s&&m<e):(m>=s||m<e)}
+function flags(d,k){const wo=workoutMet(d,k),fam=d.wife.done||d.fam.done.length>0,water=d.water>=(S.settings.water||120),food=water&&d.meals.every(m=>inWindow(m.at));
+  return {qt:!!d.qt.done,wo,wf:!!d.wife.done,fam,food,all:!!(d.qt.done&&wo&&d.wife.done&&d.fam.done.length>0&&water)}}
+function streak(f='all'){let n=0;const tk=todayKey(),live=flags(day(),tk);const dt=new Date();if(!live[f])dt.setDate(dt.getDate()-1);
+  for(let i=0;i<400;i++){const k=keyOf(dt);const ok=k===tk?live[f]:S.hist[k]?.[f];if(!ok)break;n++;dt.setDate(dt.getDate()-1)}return n}
+const STREAK_FOR={home:['all','Everything done'],quiet:['qt','Quiet time'],workout:['wo','Workout'],family:['fam','Family'],food:['food','Water and fasting']};
+function appbar(){const [f,l]=STREAK_FOR[tab];const n=streak(f);return `<div class="appbar"><span class="mark">${LOGO}</span><span class="pill" role="img" aria-label="${l} streak: ${n} day${n===1?'':'s'}">⚡ ${n}</span></div>`}
+
+/* ---------- theme / wallpaper ---------- */
+function isDark(){const m=S.settings.mode;return m==='dark'||(m==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches)}
+function wallSVG(p,style,id){
+  const {w0,w1,w2,w3}=p;const V=`viewBox="0 0 400 860" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"`;
+  if(style==='blobs')return `<svg ${V}><defs><filter id="${id}b" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="55"/></filter></defs><rect width="400" height="860" fill="${w0}"/><g filter="url(#${id}b)"><circle cx="60" cy="150" r="170" fill="${w1}"/><circle cx="380" cy="430" r="190" fill="${w3}"/><circle cx="110" cy="770" r="210" fill="${w2}"/></g></svg>`;
+  if(style==='rings')return `<svg ${V}><defs><radialGradient id="${id}g" cx="88%" cy="90%" r="95%"><stop offset="0" stop-color="${w2}"/><stop offset="1" stop-color="${w0}"/></radialGradient><filter id="${id}s"><feGaussianBlur stdDeviation="2"/></filter></defs><rect width="400" height="860" fill="url(#${id}g)"/><g fill="none" filter="url(#${id}s)" stroke-width="64"><circle cx="370" cy="790" r="580" stroke="${w3}" opacity=".32"/><circle cx="370" cy="790" r="450" stroke="${w2}" opacity=".55"/><circle cx="370" cy="790" r="320" stroke="${w1}" opacity=".62"/><circle cx="370" cy="790" r="190" stroke="${w3}" opacity=".6"/></g></svg>`;
+  return `<svg ${V}><defs><linearGradient id="${id}a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${w1}"/><stop offset="1" stop-color="${w3}"/></linearGradient><linearGradient id="${id}c" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${w2}"/><stop offset="1" stop-color="${w1}"/></linearGradient><linearGradient id="${id}e" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${w3}"/><stop offset="1" stop-color="${w2}"/></linearGradient></defs><rect width="400" height="860" fill="${w0}"/><path d="M0 250C110 170 250 330 400 230V860H0Z" fill="url(#${id}a)" opacity=".5"/><path d="M0 470C150 380 240 560 400 450V860H0Z" fill="url(#${id}c)" opacity=".68"/><path d="M0 680C120 610 290 740 400 650V860H0Z" fill="url(#${id}e)" opacity=".85"/></svg>`;
+}
+function applyTheme(){
+  syncPlan();
+  const s=S.settings,r=document.documentElement;
+  if(s.mode==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',s.mode);
+  const p=(PAL[s.palette]||PAL.lake)[isDark()?'d':'l'];
+  r.style.setProperty('--accent',p.accent);r.style.setProperty('--bg0',p.w0);r.style.setProperty('--on-accent',isDark()?'#10131a':'#ffffff');
+  $('#wall').innerHTML=wallSVG(p,s.wall,'wp');
+}
+
+/* ---------- views ---------- */
+function waterCard(d){
+  const g=S.settings.water||120,max=g;
+  return `<section class="card"><div class="cardhead"><h2>Water</h2><span class="wnum" id="waterNum">${d.water}<small> / ${g} oz</small></span></div>
+  <input class="water" type="range" min="0" max="${max}" step="4" value="${Math.min(d.water,max)}" data-in="water" style="--p:${Math.min(100,d.water/max*100)}%" aria-label="Water in ounces">
+  <div class="quick"><button data-act="water-add" data-v="8">+8 oz</button><button data-act="water-add" data-v="16">+16 oz</button><button data-act="water-add" data-v="32">+32 oz</button></div></section>`;
+}
+
+function viewHome(){
+  const d=day(),k=todayKey(),th=theme(),s=S.settings,h=new Date().getHours();
+  const pd=new Date().getDay(),P=PLAN[pd],[sn,stt]=setCount(d,planDow(d));
+  const famN=famPicks(d).filter(p=>d.fam.done.includes(p.k)).length;
+  const items=[
+    {t:'Quiet time',sub:d.qt.done?`Done. ${th.t}.`:`${Math.floor(qtSecs(d)/60)} of 15 minutes in ${th.r[0][0]}`,done:d.qt.done,go:'quiet',icon:'book'},
+    {t:P.rest?'Sabbath rest':P.walk?'Saturday walk':esc(P.name),sub:P.rest?'Rest and worship today':P.walk?(d.wo.walk?'Walk done':'Walk 30 minutes or more'):(d.wo.done?'Workout done':`${sn} of ${stt} sets logged`),done:workoutMet(d,k)&&!P.rest||(P.rest&&d.wo.walk),go:'workout',icon:P.walk||P.rest?'walk':'dumb'},
+    {t:`Love ${esc(W())}`,sub:d.wife.done?'Done today':(d.qt.done?'Today’s idea is ready':'Unlocks after quiet time'),done:d.wife.done,go:'family',icon:'heart'},
+    {t:'Time with the kids',sub:`${famN} of 3 challenges`,done:famN>0,go:'family',icon:'kids'},
+    {t:'Water',sub:`${d.water} of ${s.water} oz`,done:d.water>=s.water,go:'food',icon:'drop'}
+  ];
+  const n=items.filter(i=>i.done).length,C=2*Math.PI*46;
+  const greet=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  const dateStr=new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+  return `
+  <header class="hero">
+    <div><p class="hello">${greet}${s.name?', '+esc(s.name):''}</p><p class="hello" style="color:var(--text)">${dateStr}</p>
+      <h1 class="display">${esc(th.t)}</h1><p class="anchor">${esc(th.a)}</p></div>
+    <div class="ringbox"><svg class="ring" viewBox="0 0 110 110" width="112" height="112" role="img" aria-label="${n} of 5 done today"><circle cx="55" cy="55" r="46" fill="none" stroke="color-mix(in srgb,var(--text) 12%,transparent)" stroke-width="10"/><circle cx="55" cy="55" r="46" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-n/5)}" transform="rotate(-90 55 55)" style="transition:stroke-dashoffset .6s"/><text x="55" y="58" text-anchor="middle" class="rn">${n}/5</text><text x="55" y="75" text-anchor="middle" class="rl">today</text></svg>
+</div>
+  </header>
+  ${lockCard(d,k)}
+  <section class="card"><h2>Today</h2>
+    ${items.map(i=>`<button class="trow" data-act="tab" data-v="${i.go}"><span class="tico">${ic(i.icon)}</span><span class="grow"><b>${i.t}</b><small>${i.sub}</small></span><span class="chk ${i.done?'on':''}">${ic('check',16)}</span></button>`).join('')}
+  </section>
+  ${waterCard(d)}
+  ${weekCard()}
+  <button class="settingsbtn" data-act="open-settings">${ic('sliders',20)} Settings</button>`;
+}
+
+function lockCard(d,k){
+  const ls=lockState(),un=unlocked(d,k),P=PLAN[fromKey(k).getDay()];
+  const need=[!d.qt.done&&'quiet time',!workoutMet(d,k)&&(P.walk?'your walk':'your workout')].filter(Boolean).join(' and ');
+  const status=un?`<span class="unlock on">${ic('unlock',18)} Unlock earned today</span>`:`<span class="unlock">${ic('lock',18)} Earn unlock: finish ${need}</span>`;
+  if(ls.on&&ls.night)return `<section class="card"><div class="lockline">${ic('moon')}<h2>Rest well</h2></div><p class="muted" style="margin-top:6px">Phone down until ${fmt12(ls.w.e)}. Pray with ${esc(W())}, then sleep. Tomorrow’s quiet time starts with a rested heart.</p>${status}</section>`;
+  if(ls.on){const pk=famPicks(d);return `<section class="card accent"><div class="lockline">${ic('lock')}<h2>Lockdown until ${fmt12(ls.w.e)}</h2></div><p class="muted" style="margin-top:4px">${dur(ls.left)} of being all here. Try one of these:</p>
+    <div class="peek">${pk.slice(0,2).map(p=>`<p>${fill(p.t)}</p>`).join('')}</div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">${status}<button class="link" style="margin:12px 0 0;color:inherit;text-decoration:underline" data-act="tab" data-v="family">See all</button></div></section>`}
+  const nx=ls.next;
+  return `<section class="card"><div class="lockline">${ic(un?'unlock':'lock')}<h2>Next lockdown ${fmt12(nx.w.s)}</h2></div><p class="muted" style="margin-top:4px">In ${dur(nx.until)}, until ${fmt12(nx.w.e)}.</p>${status}</section>`;
+}
+
+function weekCard(){
+  const t=new Date(),dow=(t.getDay()+6)%7,mon=new Date(t);mon.setDate(t.getDate()-dow);
+  const tk=todayKey();let cells='';
+  for(let i=0;i<7;i++){const dt=new Date(mon);dt.setDate(mon.getDate()+i);const k=keyOf(dt);
+    const hi=k===tk?{qt:day().qt.done,wo:workoutMet(day(),tk)}:(S.hist[k]||{});const fut=dt>t&&k!==tk;const wd=dt.getDay();
+    cells+=`<div class="wd ${k===tk?'today':''} ${fut?'future':''}"><b>${'SMTWTFS'[wd]}</b><i class="${hi.qt?'on':''}" title="Quiet time"></i><i class="sq ${hi.wo&&wd!==0?'on':''}" title="Workout"></i></div>`}
+  return `<section class="card"><h2>This week</h2><div class="week">${cells}</div><div class="legend"><span><i></i>Quiet time</span><span><i class="sq"></i>Workout or walk</span></div></section>`;
+}
+
+function wifeCard(d){
+  const busy=wifeBusy;
+  return `<section class="card"><div class="cardhead"><h2>Love ${esc(W())} today</h2><span class="chk ${d.wife.done?'on':''}">${ic('check',16)}</span></div>
+  <p class="idea">${busy?'Thinking of something new…':fill(wifeIdea(d))}</p>
+  <div class="ideaacts"><button class="btn" data-act="wife-done">${d.wife.done?'Done today':'I did this'}</button><button class="btn ghost" data-act="wife-next">${ic('shuffle',18)} Another idea</button>
+  ${sampleFn?`<button class="btn ghost" data-act="wife-fresh" ${busy?'disabled':''}>${ic('spark',18)} Fresh idea from Claude</button>`:''}</div></section>`;
+}
+
+function viewQT(){
+  const d=day(),th=theme(),secs=qtSecs(d),pct=Math.min(100,secs/9);
+  return `<header class="pagehead"><p class="kicker">Today’s theme</p><h1 class="display">${esc(th.t)}</h1><p class="anchor">${esc(th.a)}</p></header>
+  <section class="card"><h2>Read</h2><p class="muted">Aim for 15 unhurried minutes. Each passage opens in the Bible app (${ver()[1]}).</p>
+    <div class="passages">${th.r.map(([l,u])=>`<a class="passage" href="${bibleUrl(u)}" target="_blank" rel="noopener">${esc(l)}${ic('ext',17)}</a>`).join('')}</div>
+    <div class="timer"><div class="clock" id="qtClock">${mmss(secs)}</div><p class="muted small" id="qtOf">${secs>=900?'15 minutes reached':'of 15:00'}</p>
+      <div class="bar"><i id="qtBar" style="width:${pct}%"></i></div>
+      <button class="btn" data-act="qt-toggle">${d.qt.run?ic('pause',18)+' Pause':ic('play',16)+(secs>1?' Resume':' Start reading')}</button>
+      ${secs<900?'<button class="link" data-act="qt-manual">I already read 15 minutes</button>':''}</div></section>
+  <section class="card"><h2>Think it through</h2><p class="muted">Read the passage first. Take your time; one honest answer beats five quick ones.</p><ol class="qs">${th.q.map((q,i)=>`<li><span class="qlab">${QLAB[i]||''}</span><p>${esc(q)}</p><textarea data-in="ans" data-i="${i}" rows="2" placeholder="Write a thought or two" aria-label="Answer ${i+1}">${esc(d.qt.ans[i]||'')}</textarea></li>`).join('')}</ol></section>
+  <section class="card"><h2>Honor Jesus today</h2><p class="muted">Pick one and do it today.</p>
+    <div class="opts">${th.h.map((h,i)=>`<button class="opt ${d.qt.honor===i?'on':''}" data-act="honor" data-v="${i}" aria-pressed="${d.qt.honor===i}">${esc(h)}</button>`).join('')}</div>
+    ${d.qt.honor!=null?`<button class="rowcheck" data-act="honor-done"><span class="chk ${d.qt.honorDone?'on':''}">${ic('check',16)}</span>${d.qt.honorDone?'Done. Well done.':'Mark it done when you’ve done it'}</button>`:''}</section>
+  ${d.qt.done?wifeCard(d):'<button class="btn big" data-act="qt-finish">Finish quiet time</button>'}`;
+}
+
+function viewFamily(){
+  const d=day(),ls=lockState(),w0=S.settings.lock[0];
+  const wc=(d.qt.done||d.wife.peek)?wifeCard(d):`<section class="card"><h2>Love ${esc(W())} today</h2><p class="muted">Today’s idea appears after your quiet time.</p><div class="row2"><button class="btn" data-act="tab" data-v="quiet">Quiet time</button><button class="btn ghost" data-act="wife-peek">Show it now</button></div></section>`;
+  return `<header class="pagehead"><h1 class="display">Family</h1><p class="anchor">${ls.on&&!ls.night?`Lockdown until ${fmt12(ls.w.e)}. Be all here.`:`Made for your evening lockdown, ${fmt12(w0.s)} to ${fmt12(w0.e)}.`}</p></header>
+  ${wc}
+  <section class="card"><div class="cardhead"><h2>Tonight with the kids</h2><button class="iconbtn" data-act="fam-shuffle" aria-label="Show different ideas">${ic('shuffle',20)}</button></div>
+    ${famPicks(d).map(p=>{const on=d.fam.done.includes(p.k);return `<button class="chal ${on?'on':''}" data-act="fam" data-v="${p.k}" aria-pressed="${on}"><span class="grow"><span class="tag">${esc(p.who)}</span><span class="txt">${fill(p.t)}</span></span><span class="chk ${on?'on':''}">${ic('check',16)}</span></button>`}).join('')}
+  </section>`;
+}
+
+function viewWorkout(){
+  const d=day(),pd=planDow(d),P=PLAN[pd],td=new Date().getDay();
+  const chips=[1,2,3,4,5,6,0].map(w=>`<button class="chip ${w===pd?'on':''} ${w===td?'today':''}" data-act="wo-plan" data-v="${w}" aria-pressed="${w===pd}"><b>${'SMTWTFS'[w]}</b><small>${PLAN[w].s}</small></button>`).join('');
+  // week accountability
+  const t=new Date(),mon=new Date(t);mon.setDate(t.getDate()-((t.getDay()+6)%7));let lifts=0,walk=false;
+  for(let i=0;i<6;i++){const dt=new Date(mon);dt.setDate(mon.getDate()+i);const k=keyOf(dt);const ok=k===todayKey()?workoutMet(d,k):S.hist[k]?.wo;if(ok){if(i<5)lifts++;else walk=true}}
+  const head=`<header class="pagehead"><h1 class="display">${P.rest?'Rest':P.walk?'Walk':'Workout'}</h1><p class="anchor">${esc(P.name)}${pd!==td?'. Logging it as today’s workout.':''}</p></header>
+  <div class="chips">${chips}</div>
+  <section class="card"><h2>This week</h2><div class="stat"><div><b>${lifts}/5</b><small>Lifting days</small></div><div><b>${walk?'1/1':'0/1'}</b><small>Saturday walk</small></div></div></section>`;
+  if(P.rest)return head+`<section class="card"><h2>Sabbath rest</h2><p class="muted" style="margin-top:4px">No training today. Worship with your church family, rest, and enjoy your people.</p>
+    <button class="toggle" data-act="wo-walk"><span class="chk ${d.wo.walk?'on':''}">${ic('check',16)}</span><span class="grow"><b>Family walk</b><small>Optional bonus</small></span></button></section>`;
+  if(P.walk)return head+`<section class="card"><h2>Saturday walk</h2><p class="muted" style="margin-top:4px">30 minutes or more. Bring the stroller and the family if you can.</p>
+    <button class="toggle" data-act="wo-walk"><span class="chk ${d.wo.walk?'on':''}">${ic('check',16)}</span><span class="grow"><b>Walk done</b><small>30+ minutes</small></span></button>
+    <button class="toggle" data-act="wo-sauna"><span class="chk ${d.wo.sauna?'on':''}">${ic('check',16)}</span><span class="grow"><b>Sauna</b><small>Optional</small></span></button></section>`;
+  const [sn,stt]=setCount(d,pd);
+  return head+`<section class="card"><div class="cardhead"><div><h2>${esc(P.name)}</h2><p class="muted small">${P.ex.length} exercises, about 25 minutes. ${sn} of ${stt} sets done.</p></div>
+    <div class="restpill" aria-label="Rest timer length"><button data-act="rest-dec" aria-label="Shorter rest">−</button><span>${S.settings.rest}s rest</span><button data-act="rest-inc" aria-label="Longer rest">+</button></div></div></section>
+  ${P.ex.map((ex,i)=>{const[name,,target]=ex;const lp=liftPlan(name,ex[1]);const sets=setsFor(d,pd,i);let rows='';
+    const s0=d.wo.sets[`${pd}:${i}-0`]||{};
+    for(let j=0;j<sets;j++){const key=`${pd}:${i}-${j}`;const st=d.wo.sets[key]||{};
+      const wv=st.w??(j>0&&s0.w!=null&&s0.w!==''?s0.w:lp.w);const rv=st.r??(j>0&&s0.r!=null&&s0.r!==''?s0.r:lp.r);
+      rows+=`<div class="setrow ${st.done?'done':''}"><span class="setn">Set ${j+1}</span>
+      <label class="fld"><input type="number" inputmode="decimal" step="any" data-in="w" data-k="${key}" data-ex="${pd}:${i}" data-j="${j}" value="${esc(wv)}" placeholder="0" aria-label="${esc(name)} set ${j+1} weight"><span>lb</span></label>
+      <label class="fld"><input type="number" inputmode="numeric" data-in="r" data-k="${key}" data-ex="${pd}:${i}" data-j="${j}" value="${esc(rv)}" placeholder="${esc(parseInt(target)||'')}" aria-label="${esc(name)} set ${j+1} reps"><span>${/sec/.test(target)?'sec':'reps'}</span></label>
+      <button class="donebtn ${st.done?'on':''}" data-act="set-done" data-k="${key}" data-i="${i}" aria-label="${st.done?'Undo':'Mark'} set ${j+1} done">${st.done?ic('check',20):'Done'}</button></div>`}
+    const lastDone=d.wo.sets[`${pd}:${i}-${sets-1}`]?.done;
+    const hint=lp.last?`Last time ${esc(lp.last.w||'—')} lb × ${esc(lp.last.r||'—')}.${lp.up?` <span class="uphint">You hit every rep, so today is up ${lp.up} lb.</span>`:''}`:'Enter set 1 and the rest fill in.';
+    return `<section class="card ex"><h2>${esc(name)}</h2><p class="target">${sets} × ${esc(target)}</p><p class="muted small" style="margin-top:2px">${hint}</p>${rows}
+    <div class="setacts"><button data-act="set-add" data-v="${pd}:${i}">+ Add set</button>${sets>1&&!lastDone?`<button data-act="set-rm" data-v="${pd}:${i}">Remove set</button>`:''}</div></section>`}).join('')}
+  <section class="card"><h2>Finish strong</h2>
+    <button class="toggle" data-act="wo-walk"><span class="chk ${d.wo.walk?'on':''}">${ic('check',16)}</span><span class="grow"><b>10-minute walk</b><small>Every lifting day</small></span></button>
+    <button class="toggle" data-act="wo-sauna"><span class="chk ${d.wo.sauna?'on':''}">${ic('check',16)}</span><span class="grow"><b>Sauna</b><small>Optional</small></span></button></section>
+  <button class="btn big" data-act="wo-finish">${d.wo.done?ic('check',18)+' Workout complete':'Finish workout'}</button>`;
+}
+
+function mealCal(m){const k=(m.items||[]).filter(x=>x.cal!=null&&x.cal!==''&&!isNaN(x.cal));return k.length?k.reduce((t,x)=>t+Number(x.cal),0):(m.items&&m.items.length?null:(m.cal??null))}
+function recentMeals(){const out=[],seen=new Set();Object.keys(S.days).sort().reverse().forEach(k=>{(S.days[k].meals||[]).forEach(m=>{const key=String(m.text||'').toLowerCase().trim();if(!key||seen.has(key)||out.length>=8)return;if(mealCal(m)==null)return;seen.add(key);out.push({k,m})})});return out}
+function mealSrc(m){if(m.pending)return 'Checking with Claude…';const unk=(m.items||[]).filter(x=>x.cal==null||x.cal==='').map(x=>x.name).filter(Boolean);
+  if(unk.length)return `Tap to add calories for: ${unk.join(', ')}`;return m.src==='claude'?'Estimated by Claude':m.src==='manual'?'Your numbers':'Estimate'}
+function viewFood(){
+  const d=day(),f=fastState(),s=S.settings,fs=toMin(s.fastStart),fe=toMin(s.fastEnd),m=nowMin();
+  const band=fs<fe?`<i class="band" style="left:${fs/14.4}%;width:${(fe-fs)/14.4}%"></i>`:`<i class="band" style="left:${fs/14.4}%;width:${(1440-fs)/14.4}%"></i><i class="band" style="left:0;width:${fe/14.4}%"></i>`;
+  const tot=calTotal(d),rec=recentMeals();
+  return `<header class="pagehead"><h1 class="display">Food</h1><p class="anchor">Eating window ${fmt12(s.fastStart)} to ${fmt12(s.fastEnd)}</p></header>
+  <section class="card"><p class="muted" style="font-weight:700">${f.open?'Eating window open':'Fasting'}</p>
+    <p class="faststate">${f.open?`Closes in ${dur(f.left)}`:`Opens in ${dur(f.left)}`}</p>
+    <div class="tl" aria-hidden="true">${band}<i class="now" style="left:${m/14.4}%"></i></div>
+    <div class="tlx"><span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>12 AM</span></div></section>
+  <section class="card"><h2>Log a meal</h2><p class="muted small">Say it how you’d text it. Name the restaurant if you ate out.</p>
+    <textarea id="mealText" data-in="meal" rows="2" style="margin-top:10px" placeholder="Chick-fil-A spicy deluxe, medium fries, diet lemonade" aria-label="What you ate">${esc(mealDraft)}</textarea>
+    <div class="composer"><label class="calbox"><input id="mealCal" type="number" inputmode="numeric" data-in="mealcalnew" value="${esc(mealCalDraft)}" placeholder="Auto" aria-label="Calories, optional"><span>cal</span></label><button type="button" class="btn" data-act="meal-add">Add meal</button></div>
+    <p class="muted small" style="margin-top:8px">Leave calories on Auto to get an estimate${sampleFn?' that Claude then double-checks':''}. Tap any meal to change it.</p>
+    ${rec.length?`<p class="muted small" style="font-weight:700;margin:14px 0 6px">Log again</p><div class="rchips">${rec.map(r=>`<button class="rchip" data-act="meal-again" data-v="${r.k}|${r.m.id}">${esc(r.m.text)} <b>${mealCal(r.m)}</b></button>`).join('')}</div>`:''}
+  </section>
+  <section class="card"><div class="total"><h2>Today</h2><span><b id="calTotal">${tot}</b> <span class="muted">${s.cal?`of ${s.cal} cal`:'cal'}</span></span></div>
+    ${s.cal?`<div class="bar" style="margin:10px 0 4px"><i style="width:${Math.min(100,tot/s.cal*100)}%"></i></div>`:''}
+    ${d.meals.length?d.meals.map(mm=>{const c=mealCal(mm);return `<button class="mealrow" data-act="meal-edit" data-v="${mm.id}"><span class="grow"><span class="mtxt">${esc(mm.text)}</span>
+      ${mm.items&&mm.items.length>1?`<span class="muted small mline">${mm.items.map(x=>`${esc(x.name)}${x.cal!=null&&x.cal!==''?` ${x.cal}`:''}`).join(', ')}</span>`:''}
+      <span class="small mline msrc">${new Date(mm.at).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}. ${esc(mealSrc(mm))}</span>${mm.note?`<span class="muted small mline">${esc(mm.note)}</span>`:''}</span>
+      <span class="mcal"><b>${c??'?'}</b><small>cal</small></span>${ic('chev',18)}</button>`}).join(''):'<p class="muted" style="margin-top:8px">Nothing logged yet today.</p>'}
+  </section>
+  ${waterCard(d)}`;
+}
+function viewMealEdit(){
+  const m=day().meals.find(x=>x.id===editId);if(!m)return '<div class="sheet-in"><div class="sheethead"><h2 class="display sm">Meal</h2><button class="btn small" data-act="me-close">Done</button></div><p class="muted">This meal was removed.</p></div>';
+  const t=new Date(m.at),hhmm=String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0'),c=mealCal(m);
+  return `<div class="sheet-in"><div class="sheethead"><h2 class="display sm">Edit meal</h2><button class="btn small" data-act="me-close">Done</button></div>
+  <section class="card"><label class="fstack"><span>What you ate</span><textarea data-me="text" rows="2">${esc(m.text)}</textarea></label>
+    <label class="frow"><span>Time</span><input type="time" data-me="time" value="${hhmm}"></label>
+    <button type="button" class="btn ghost" data-act="me-reest" ${m.pending?'disabled':''}>${m.pending?'Checking with Claude…':ic('spark',18)+' Re-estimate from description'}</button></section>
+  <section class="card"><div class="total"><h2>Items</h2><span><b id="meTotal">${c??'—'}</b> <span class="muted">cal</span></span></div>
+    <p class="muted small">Change any name or number. The total updates as you type.</p>
+    ${(m.items||[]).map((x,i)=>`<div class="itrow"><input type="text" data-me="iname" data-i="${i}" value="${esc(x.name)}" placeholder="Item" aria-label="Item ${i+1} name"><label class="calbox"><input type="number" inputmode="numeric" data-me="ical" data-i="${i}" value="${x.cal??''}" placeholder="?" aria-label="Item ${i+1} calories"><span>cal</span></label><button type="button" class="iconbtn sm" data-act="me-idel" data-v="${i}" aria-label="Remove item ${i+1}">${ic('x',16)}</button></div>`).join('')}
+    <div class="setacts"><button type="button" data-act="me-iadd">+ Add item</button></div></section>
+  <section class="card"><button type="button" class="btn ghost danger" data-act="me-del">${delArmed?'Tap again to delete':'Delete meal'}</button></section></div>`;
+}
+function viewSettings(){
+  const s=S.settings,dk=isDark()?'d':'l';
+  const field=(k,l,ph)=>`<label class="fstack"><span>${l}</span><input type="text" data-set="${k}" value="${esc(s[k])}" placeholder="${ph}" autocomplete="off"></label>`;
+  return `<div class="sheet-in"><div class="sheethead"><h2 class="display sm">Settings</h2><button class="btn small" data-act="close-settings">Done</button></div>
+  <section class="card"><h3>Your family</h3>${field('name','Your name','First name')}${field('wife','Wife’s name','Her name')}${field('big','Oldest child','Name')}${field('baby','Baby','Name')}</section>
+  <section class="card"><h3>Color</h3><div class="swatches">${Object.entries(PAL).map(([id,p])=>`<button class="sw ${s.palette===id?'on':''}" data-act="pal" data-v="${id}" aria-pressed="${s.palette===id}"><span class="tile">${wallSVG(p[dk],s.wall,'sw'+id)}</span><em>${p.n}</em></button>`).join('')}</div>
+    <h3>Wallpaper</h3><div class="seg">${['waves','blobs','rings'].map(w=>`<button class="${s.wall===w?'on':''}" data-act="wall" data-v="${w}">${cap(w)}</button>`).join('')}</div>
+    <h3>Appearance</h3><div class="seg">${[['auto','Auto'],['light','Light'],['dark','Dark']].map(([v,l])=>`<button class="${s.mode===v?'on':''}" data-act="mode" data-v="${v}">${l}</button>`).join('')}</div></section>
+  <section class="card"><h3>Bible</h3><label class="frow"><span>Translation</span><select data-set="bible">${VERSIONS.map(v=>`<option value="${v[0]}" ${v[0]===s.bible?'selected':''}>${v[1]}</option>`).join('')}</select></label></section>
+  <section class="card"><h3>Workout</h3><label class="frow"><span>Rest timer (seconds)</span><input type="number" inputmode="numeric" data-set="rest" value="${s.rest}" min="15" max="300" step="15"></label></section>
+  ${planEditor()}
+  <section class="card"><h3>Food and water</h3>
+    <label class="frow"><span>Eating window opens</span><input type="time" data-set="fastStart" value="${s.fastStart}"></label>
+    <label class="frow"><span>Eating window closes</span><input type="time" data-set="fastEnd" value="${s.fastEnd}"></label>
+    <label class="frow"><span>Calorie goal (0 = none)</span><input type="number" inputmode="numeric" data-set="cal" value="${s.cal}"></label>
+    <label class="frow"><span>Water goal (oz)</span><input type="number" inputmode="numeric" data-set="water" value="${s.water}"></label></section>
+  <section class="card"><h3>Lockdown times</h3>${s.lock.map((w,i)=>`<div class="lockwin"><input type="time" data-lock="${i}-s" value="${w.s}" aria-label="Lockdown ${i+1} start"><span class="muted">to</span><input type="time" data-lock="${i}-e" value="${w.e}" aria-label="Lockdown ${i+1} end"></div>`).join('')}</section>
+  <section class="card"><details><summary><h3>Set up the phone lockdown</h3>${ic('lock',20)}</summary>
+    <p class="muted small" style="margin-top:10px">A web app can’t lock your phone, so iPhone’s Screen Time does the locking. This app tracks whether you’ve earned the unlock. Menu names can shift a little between iOS versions.</p>
+    <ol class="steps">
+      <li><b>Hand over the passcode.</b> Settings, Screen Time, Lock Screen Time Settings. Let ${esc(W())} set the passcode. When Home says “Unlock earned,” show her and she can approve extra time.</li>
+      <li><b>Night window.</b> Screen Time, Downtime, Scheduled: ${fmt12(s.lock[1].s)} to ${fmt12(s.lock[1].e)}.</li>
+      <li><b>Evening window.</b> iPhone allows one Downtime window a day. Either stretch Downtime to ${fmt12(s.lock[0].s)}–${fmt12(s.lock[1].e)} and have her approve an hour once you’ve earned it, or create a Focus for ${fmt12(s.lock[0].s)}–${fmt12(s.lock[0].e)} that shows only one Home Screen page of essentials.</li>
+      <li><b>Always allowed.</b> Phone, Messages, Camera, Photos, Maps, Clock, Bible, and Claude, so this app always opens.</li>
+      <li><b>No new apps.</b> Content &amp; Privacy Restrictions, then App Store purchases, and set Installing Apps to Don’t Allow.</li>
+      <li><b>No social media.</b> App Limits, Social, set to 1 minute a day, or delete the apps.</li>
+    </ol></details></section>
+  <section class="card"><button class="btn ghost" data-act="reset-day">${resetArmed?'Tap again to clear today':'Clear today’s entries'}</button></section></div>`;
+}
+
+const TABS=[['home','Home','home'],['quiet','Quiet time','book'],['workout','Workout','dumb'],['family','Family','heart'],['food','Food','food']];
+function renderTabs(){$('#tabs').innerHTML=TABS.map(([id,l,i])=>`<button class="tab ${tab===id?'on':''}" data-act="tab" data-v="${id}" aria-current="${tab===id?'page':'false'}">${ic(i,24)}${l}</button>`).join('')}
+function render(){const v={home:viewHome,quiet:viewQT,workout:viewWorkout,family:viewFamily,food:viewFood}[tab];$('#app').innerHTML=appbar()+v();renderTabs();
+  const act=document.activeElement,typing=isTyping();
+  const sh=$('#sheet');if(!sh.hidden&&!(typing&&sh.contains(act)))sh.innerHTML=viewSettings();
+  const ed=$('#editor');if(!ed.hidden&&!(typing&&ed.contains(act)))ed.innerHTML=viewMealEdit()}
+
+/* ---------- toast, sound ---------- */
+let toastT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2800)}
+let actx=null;function prime(){try{if(!actx){const A=window.AudioContext||window.webkitAudioContext;if(A)actx=new A()}if(actx&&actx.state==='suspended')actx.resume()}catch(e){}}
+function beep(){try{if(actx){[0,.22].forEach(off=>{const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;o.connect(g);g.connect(actx.destination);const t=actx.currentTime+off;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.3,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.18);o.start(t);o.stop(t+.2)})}}catch(e){}try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}}
+
+/* ---------- rest timer ---------- */
+let RT=null,rtInt=null;const RC=540.35;
+function startRest(label){const sec=S.settings.rest;RT={end:Date.now()+sec*1000,total:sec};$('#restNext').textContent=label||'';$('#rest').hidden=false;rtTick();clearInterval(rtInt);rtInt=setInterval(rtTick,250)}
+function rtTick(){if(!RT)return;const left=Math.max(0,(RT.end-Date.now())/1000);if(left>RT.total)RT.total=left;
+  $('#restNum').textContent=mmss(Math.ceil(left));$('#restArc').setAttribute('stroke-dashoffset',RC*(1-left/RT.total));
+  if(left<=0){clearInterval(rtInt);RT=null;$('#restNum').textContent='Go';beep();setTimeout(()=>{if(!RT)$('#rest').hidden=true},1300)}}
+function stopRest(){clearInterval(rtInt);RT=null;$('#rest').hidden=true}
+
+/* ---------- Claude-powered ---------- */
+function applyLocal(m){let r;try{r=estimateLocal(m.text)}catch(e){r={items:[],note:''}}m.items=r.items.length?r.items:[{name:m.text,cal:null}];m.cal=mealCal(m);m.src='local';m.note=r.note||''}
+function addMeal(){
+  const ta=$('#mealText'),ce=$('#mealCal');
+  const text=String((ta&&ta.value)||mealDraft||'').trim();
+  const rawCal=ce&&ce.value!==''?ce.value:mealCalDraft;const manual=rawCal!==''&&rawCal!=null&&!isNaN(+rawCal)?Math.max(0,Math.round(+rawCal)):null;
+  if(!text&&manual==null){toast('Type what you ate first.');if(ta)ta.focus();return}
+  if(ta)ta.blur();if(ce)ce.blur();
+  const d=day();const m={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),text:text||'Meal',at:Date.now(),items:[],cal:null,src:'local'};
+  if(manual!=null){m.items=[{name:text||'Meal',cal:manual}];m.cal=manual;m.src='manual'}else applyLocal(m);
+  d.meals.unshift(m);mealDraft='';mealCalDraft='';markDay();render();
+  const c=mealCal(m);toast(c!=null?`Added. About ${c} calories.`:'Added. Tap it to add calories.');
+  if(m.src!=='manual')claudeEstimate(m);
+}
+async function claudeEstimate(m){
+  if(!sampleFn||m.pending)return;m.pending=true;render();const mark=m.editedAt||0;
+  const prompt=`Estimate calories for this meal log entry. If a restaurant or chain is named, use its published nutrition information as best you know it; otherwise use typical USDA values and common US portions unless sizes are given. List each food separately.
+Meal: [${m.text}]
+Reply with only JSON and nothing else: {"items":[{"name":"short item name with size or count","calories":0}],"note":"one short assumption, under 12 words"}`;
+  const ctl=new AbortController();const timer=setTimeout(()=>ctl.abort(),45000);
+  try{const res=await sampleFn(prompt,{modelTier:'quick',signal:ctl.signal});
+    const raw=String(res&&res.text||'');const a=raw.indexOf('{'),z=raw.lastIndexOf('}');if(a<0||z<=a)throw {code:'bad_json'};
+    const r=JSON.parse(raw.slice(a,z+1));const items=Array.isArray(r.items)?r.items.slice(0,15).map(x=>({name:cap(String(x.name||'Item').slice(0,60)),cal:Math.max(0,Math.round(Number(x.calories)||0))})).filter(x=>x.name):[];
+    if(items.length&&(m.editedAt||0)===mark){m.items=items;m.cal=mealCal(m);m.src='claude';m.note=String(r.note||'').slice(0,120)}
+  }catch(e){if(e&&e.code==='not_granted')sampleFn=null}
+  finally{clearTimeout(timer)}
+  m.pending=false;markDay();render();
+}
+async function freshIdea(){
+  const d=day();if(!sampleFn)return;wifeBusy=true;render();
+  const prompt=`Give one fresh, specific, free way a Christian husband can encourage and love his wife today. They have a child who is almost 5 and an 11-week-old baby, so she may be tired and still recovering after birth. It should challenge him in a godly, selfless way, be doable today, and cost nothing. Do not repeat this idea: "${wifeIdea(d)}". Reply with 1–2 plain sentences addressed to him as "you". No intro, no quotes.`;
+  try{const r=await sampleFn(prompt,{modelTier:'quick',cache:false});const t=String(r.text||'').trim().replace(/^["“]+|["”]+$/g,'');if(t){d.wife.fresh=t.slice(0,400);markDay()}}
+  catch(e){if(e&&e.code==='not_granted'){sampleFn=null;toast('Permission to use Claude was declined.')}else toast('Couldn’t get a new idea right now.')}
+  wifeBusy=false;render();
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;prime();
+  const a=b.dataset.act,v=b.dataset.v,d=day();
+  if(a!=='me-del')delArmed=false;if(a!=='pe-reset')planResetArmed=false;
+  try{switch(a){
+    case 'tab':tab=v;render();window.scrollTo(0,0);break;
+    case 'qt-toggle':if(d.qt.run){d.qt.secs=qtSecs(d);d.qt.run=null}else d.qt.run=Date.now();markDay();render();break;
+    case 'qt-manual':d.qt.secs=Math.max(qtSecs(d),900);d.qt.run=null;d.qt.hit=true;markDay();render();break;
+    case 'qt-finish':if(d.qt.run){d.qt.secs=qtSecs(d);d.qt.run=null}d.qt.done=true;markDay();render();toast(d.qt.secs>=900?'Quiet time done. Here’s how to love her today.':'Done. Shoot for the full 15 tomorrow.');setTimeout(()=>{const c=document.querySelectorAll('.card');c[c.length-1]?.scrollIntoView({behavior:'smooth',block:'center'})},60);break;
+    case 'honor':{const i=+v;d.qt.honor=d.qt.honor===i?null:i;d.qt.honorDone=false;markDay();render();break}
+    case 'honor-done':d.qt.honorDone=!d.qt.honorDone;markDay();render();break;
+    case 'wife-done':d.wife.done=!d.wife.done;markDay();render();if(d.wife.done)toast('That’s loving her well.');break;
+    case 'wife-next':d.wife.off++;d.wife.fresh=null;markDay();render();break;
+    case 'wife-fresh':freshIdea();break;
+    case 'wife-peek':d.wife.peek=true;markDay();render();break;
+    case 'fam':{const i=d.fam.done.indexOf(v);if(i>=0)d.fam.done.splice(i,1);else{d.fam.done.push(v);toast('Memory made.')}markDay();render();break}
+    case 'fam-shuffle':d.fam.seed++;markDay();render();break;
+    case 'wo-plan':d.wo.plan=(+v===new Date().getDay())?null:+v;markDay();render();break;
+    case 'set-done':{
+      const key=b.dataset.k,row=b.closest('.setrow'),st=d.wo.sets[key]||(d.wo.sets[key]={});const pd=planDow(d),i=+b.dataset.i;
+      if(st.done){st.done=false;saveLift(d,pd,i);markDay();render();break}
+      st.w=row.querySelector('[data-in="w"]').value;st.r=row.querySelector('[data-in="r"]').value;st.done=true;
+      saveLift(d,pd,i);
+      let next=null;PLAN[pd].ex.forEach((ex,x)=>{const c=setsFor(d,pd,x);for(let j=0;j<c;j++){if(!next&&!d.wo.sets[`${pd}:${x}-${j}`]?.done)next=`Next: ${ex[0]}, set ${j+1}`}});
+      markDay();render();
+      if(next)startRest(next);else toast('All sets done. Walk, then finish.');
+      break}
+    case 'set-add':case 'set-rm':{const[pd,i]=v.split(':').map(Number);d.wo.n=d.wo.n||{};const c=setsFor(d,pd,i);
+      d.wo.n[v]=a==='set-add'?Math.min(10,c+1):Math.max(1,c-1);
+      if(a==='set-rm')delete d.wo.sets[`${pd}:${i}-${c-1}`];
+      const L=S.lifts[PLAN[pd].ex[i][0]];if(L&&L.day===todayKey()){L.sets=d.wo.n[v];markProf()}
+      markDay();render();break}
+    case 'wo-walk':d.wo.walk=!d.wo.walk;markDay();render();break;
+    case 'wo-sauna':d.wo.sauna=!d.wo.sauna;markDay();render();break;
+    case 'wo-finish':d.wo.done=!d.wo.done;markDay();render();if(d.wo.done)toast(d.qt.done?'Workout done. Unlock earned.':'Workout done. Strong work.');break;
+    case 'rest-dec':S.settings.rest=Math.max(15,S.settings.rest-15);markProf();render();break;
+    case 'rest-inc':S.settings.rest=Math.min(300,S.settings.rest+15);markProf();render();break;
+    case 'rt-minus':if(RT){RT.end-=15000;rtTick()}break;
+    case 'rt-plus':if(RT){RT.end+=15000;rtTick()}break;
+    case 'rt-skip':stopRest();break;
+    case 'water-add':{const max=S.settings.water||120;d.water=Math.min(max,d.water+(+v));markDay();render();if(d.water>=S.settings.water)toast('Water goal reached.');break}
+    case 'meal-add':addMeal();break;
+    case 'meal-del':d.meals=d.meals.filter(m=>m.id!==v);markDay();render();break;
+    case 'open-settings':resetArmed=false;$('#sheet').innerHTML=viewSettings();$('#sheet').hidden=false;$('#sheet').scrollTop=0;break;
+    case 'close-settings':$('#sheet').hidden=true;render();break;
+    case 'pal':S.settings.palette=v;markProf();applyTheme();render();break;
+    case 'wall':S.settings.wall=v;markProf();applyTheme();render();break;
+    case 'mode':S.settings.mode=v;markProf();applyTheme();render();break;
+    case 'meal-edit':editId=v;delArmed=false;$('#editor').innerHTML=viewMealEdit();$('#editor').hidden=false;$('#editor').scrollTop=0;break;
+    case 'me-close':$('#editor').hidden=true;editId=null;render();break;
+    case 'me-reest':{const m=d.meals.find(x=>x.id===editId);if(!m)break;m.editedAt=Date.now();applyLocal(m);markDay();render();claudeEstimate(m);break}
+    case 'me-iadd':{const m=d.meals.find(x=>x.id===editId);if(!m)break;m.items.push({name:'',cal:null});m.editedAt=Date.now();m.src='manual';markDay();render();const ins=document.querySelectorAll('#editor [data-me="iname"]');if(ins.length)ins[ins.length-1].focus();break}
+    case 'me-idel':{const m=d.meals.find(x=>x.id===editId);if(!m)break;m.items.splice(+v,1);if(!m.items.length)m.items=[{name:m.text,cal:null}];m.cal=mealCal(m);m.editedAt=Date.now();m.src='manual';markDay();render();break}
+    case 'me-del':{if(!delArmed){delArmed=true;$('#editor').innerHTML=viewMealEdit();break}d.meals=d.meals.filter(x=>x.id!==editId);delArmed=false;editId=null;$('#editor').hidden=true;markDay();render();toast('Meal deleted.');break}
+    case 'meal-again':{const[k,id]=v.split('|');const src=((S.days[k]||{}).meals||[]).find(x=>x.id===id);if(!src)break;
+      const m={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),text:src.text,at:Date.now(),items:JSON.parse(JSON.stringify(src.items||[])),src:src.src==='claude'?'claude':src.src,note:''};m.cal=mealCal(m);
+      d.meals.unshift(m);markDay();render();toast(`Logged again. ${m.cal} calories.`);break}
+    case 'pe-day':planDay=+v;$('#sheet').innerHTML=viewSettings();break;
+    case 'pe-type':{const p=planCopy(),pd=p[planDay];
+      if(v==='lift'){delete pd.walk;delete pd.rest;if(!pd.ex||!pd.ex.length)pd.ex=[['New exercise',3,'10']];if(/walk|rest/i.test(pd.name))pd.name='Workout';pd.s=shortName(pd.name)}
+      else if(v==='walk'){pd.walk=true;delete pd.rest;pd.s='Walk';if(!/walk/i.test(pd.name))pd.name='Walk'}
+      else{pd.rest=true;delete pd.walk;pd.s='Rest';if(!/rest/i.test(pd.name))pd.name='Rest day'}
+      markProf();syncPlan();$('#sheet').innerHTML=viewSettings();break}
+    case 'pe-add':{const p=planCopy();p[planDay].ex=p[planDay].ex||[];p[planDay].ex.push(['New exercise',3,'10']);markProf();syncPlan();$('#sheet').innerHTML=viewSettings();const ins=document.querySelectorAll('#sheet [data-plan="ex-name"]');const last=ins[ins.length-1];if(last){last.focus();last.select()}break}
+    case 'pe-up':{const i=+v;if(i<1)break;const p=planCopy(),ex=p[planDay].ex;[ex[i-1],ex[i]]=[ex[i],ex[i-1]];markProf();syncPlan();$('#sheet').innerHTML=viewSettings();break}
+    case 'pe-del':{const p=planCopy(),ex=p[planDay].ex;if(ex.length<=1){toast('Keep at least one exercise, or make it a walk or rest day.');break}ex.splice(+v,1);markProf();syncPlan();$('#sheet').innerHTML=viewSettings();break}
+    case 'pe-reset':{if(!planResetArmed){planResetArmed=true;$('#sheet').innerHTML=viewSettings();break}S.settings.plan=null;planResetArmed=false;markProf();syncPlan();$('#sheet').innerHTML=viewSettings();toast('Starter plan restored.');break}
+    case 'reset-day':if(!resetArmed){resetArmed=true;$('#sheet').innerHTML=viewSettings();break}S.days[todayKey()]=blankDay();resetArmed=false;markDay();render();toast('Today cleared.');break;
+  }}catch(err){console.error(err);toast('Something went wrong: '+((err&&err.message)||err))}
+});
+document.addEventListener('input',e=>{
+  const el=e.target;
+  if(el.dataset.me){const m=day().meals.find(x=>x.id===editId);if(!m)return;const me=el.dataset.me;
+    if(me==='text')m.text=el.value;
+    else if(me==='iname'){if(m.items[+el.dataset.i])m.items[+el.dataset.i].name=el.value;m.src='manual'}
+    else if(me==='ical'){if(m.items[+el.dataset.i])m.items[+el.dataset.i].cal=el.value===''||isNaN(+el.value)?null:Math.max(0,Math.round(+el.value));m.cal=mealCal(m);m.src='manual';const tt=$('#meTotal');if(tt)tt.textContent=m.cal??'—'}
+    if(me!=='time'){m.editedAt=Date.now();markDay()}return}
+  if(el.dataset.plan){const p=planCopy(),pd=p[planDay],i=+el.dataset.i,k=el.dataset.plan;
+    if(k==='name'){pd.name=el.value.slice(0,40);if(!pd.walk&&!pd.rest)pd.s=shortName(pd.name)}
+    else if(k==='ex-name'&&pd.ex[i])pd.ex[i][0]=el.value.slice(0,50);
+    else if(k==='ex-sets'&&pd.ex[i]){const n=Math.round(+el.value);if(n>=1&&n<=10)pd.ex[i][1]=n}
+    else if(k==='ex-target'&&pd.ex[i])pd.ex[i][2]=el.value.slice(0,16);
+    markProf();syncPlan();return}
+  const t=el.dataset.in;if(!t)return;const d=day();
+  if(t==='mealcalnew'){mealCalDraft=el.value;return}
+
+  if(t==='ans'){d.qt.ans[el.dataset.i]=el.value;markDay()}
+  else if(t==='w'||t==='r'){const st=d.wo.sets[el.dataset.k]||(d.wo.sets[el.dataset.k]={});st[t]=el.value;
+    const j=+el.dataset.j,ex=el.dataset.ex;
+    if(j===0){document.querySelectorAll(`[data-in="${t}"][data-ex="${ex}"]`).forEach(inp=>{const jj=+inp.dataset.j;if(jj===0)return;const s2=d.wo.sets[inp.dataset.k]||(d.wo.sets[inp.dataset.k]={});if(s2.done||s2['t'+t])return;s2[t]=el.value;inp.value=el.value})}
+    else st['t'+t]=true;
+    markDay()}
+  else if(t==='water'){d.water=+el.value;el.style.setProperty('--p',(el.value/el.max*100)+'%');const n=$('#waterNum');if(n)n.firstChild.nodeValue=d.water;markDay()}
+  else if(t==='meal'){mealDraft=el.value}
+  else if(t==='mealcal'){const m=d.meals.find(x=>x.id===el.dataset.id);if(m){m.cal=el.value===''?null:Math.round(+el.value);markDay();const c=$('#calTotal');if(c)c.textContent=calTotal(d)}}
+});
+document.addEventListener('change',e=>{
+  const el=e.target;
+  if(el.dataset.me==='time'&&el.value){const d=day(),m=d.meals.find(x=>x.id===editId);if(m){const[h,mi]=el.value.split(':').map(Number);const dt=new Date(m.at);dt.setHours(h,mi,0,0);m.at=dt.getTime();d.meals.sort((x,y)=>y.at-x.at);markDay();render()}return}
+  if(el.dataset.plan){const p=planCopy(),pd=p[planDay],i=+el.dataset.i,k=el.dataset.plan;
+    if(k==='ex-name'&&pd.ex[i]&&!pd.ex[i][0].trim())pd.ex[i][0]='Exercise';
+    if(k==='ex-target'&&pd.ex[i]&&!String(pd.ex[i][2]).trim())pd.ex[i][2]='10';
+    if(k==='ex-sets'&&pd.ex[i]){pd.ex[i][1]=Math.min(10,Math.max(1,Math.round(+el.value)||3));el.value=pd.ex[i][1]}
+    if(k==='name'&&!pd.name.trim()){pd.name='Workout';pd.s='Lift'}
+    markProf();syncPlan();return}
+
+  if(el.dataset.set){const k=el.dataset.set;let v=el.value;
+    if(k==='rest')v=Math.min(300,Math.max(15,Math.round(+v||60)));
+    else if(k==='water')v=Math.max(8,Math.round(+v||120));
+    else if(k==='cal')v=Math.max(0,Math.round(+v||0));
+    else if((k==='fastStart'||k==='fastEnd')&&!v)return;
+    else if(typeof v==='string')v=v.trim().slice(0,40);
+    S.settings[k]=v;markProf();applyTheme();render()}
+  if(el.dataset.lock&&el.value){const[i,p]=el.dataset.lock.split('-');S.settings.lock[+i][p]=el.value;markProf();render()}
+  if(el.dataset.in==='water'&&tab==='home')render();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('#rest').hidden)stopRest();else if(!$('#editor').hidden){$('#editor').hidden=true;editId=null;render()}else if(!$('#sheet').hidden){$('#sheet').hidden=true;render()}}});
+
+/* ---------- clock ---------- */
+let curKey=todayKey(),tick=0;
+setInterval(()=>{
+  const k=todayKey();if(k!==curKey){curKey=k;if(!isTyping())render();return}
+  if(tab==='quiet'){const d=day(),s=qtSecs(d),c=$('#qtClock');if(c){c.textContent=mmss(s);$('#qtBar').style.width=Math.min(100,s/9)+'%';if(s>=900)$('#qtOf').textContent='15 minutes reached'}
+    if(d.qt.run&&s>=900&&!d.qt.hit){d.qt.hit=true;markDay();beep();toast('15 minutes. Keep going or finish up.')}}
+  if(++tick%30===0&&(tab==='home'||tab==='food'||tab==='family')&&!isTyping()&&$('#sheet').hidden)render();
+},1000);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{applyTheme();render()});
+
+window.addEventListener('error',e=>{try{toast('Something went wrong: '+(e.message||'unknown error'))}catch(_){}});
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+/* ---------- start ---------- */
+loadLocal();migrate();applyTheme();render();initCloud();if(dirtyProf)schedule();
+</script>
+</body>
+</html>
