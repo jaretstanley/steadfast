@@ -264,6 +264,15 @@ textarea,input[type=text],input[type=number],input[type=time],select{font:inheri
 .sunup{width:100%;padding:24px;border-radius:999px;border:0;background:#fff;color:#1a1a1a;font:800 26px 'Bricolage Grotesque',sans-serif;box-shadow:0 10px 40px rgba(0,0,0,.25)}
 .suncancel{background:none;border:1px solid currentColor;color:inherit;border-radius:999px;padding:10px 18px;font-weight:700;opacity:.7}
 .sunwarn{margin-top:12px;font-size:13px;opacity:.8}
+.pills{display:flex;gap:8px;align-items:center}
+.apill{border:1px solid var(--line);color:var(--text);cursor:pointer}
+.altimes{display:grid;grid-template-columns:auto 1fr 1fr;gap:8px;align-items:center}
+.altimes b{font-size:14.5px}.altimes input{padding:9px 8px}
+.bigwin{margin-top:8px;font:800 22px/1.2 'Bricolage Grotesque',sans-serif;color:var(--accent)}
+.sunmain{display:flex;flex-direction:column;justify-content:space-between;height:100%}
+.sunpray{overflow:auto;height:100%;color:#2a1a10}
+.sunk{font-weight:700;opacity:.75}.sunh{font:800 34px/1.1 'Bricolage Grotesque',sans-serif;margin:6px 0 16px}
+.sunparts{display:flex;flex-direction:column;gap:14px;margin-bottom:22px}.sunparts b{display:block;font-size:14px;color:#a3401c}.sunparts p{font-size:17px;line-height:1.45}
 /* Tabs */
 .tabs{position:fixed;z-index:20;left:50%;bottom:0;transform:translateX(-50%);width:min(560px,100%);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:var(--card2);-webkit-backdrop-filter:blur(26px) saturate(1.6);backdrop-filter:blur(26px) saturate(1.6);border-top:1px solid var(--line)}
 .tab{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;font-size:11.5px;font-weight:700;color:var(--muted);border-radius:16px}
@@ -318,7 +327,7 @@ details summary h3{margin:0}
 <div id="sheet" class="sheet" hidden role="dialog" aria-label="Settings"></div>
 <div id="editor" class="sheet" hidden role="dialog" aria-label="Edit meal"></div>
 <div id="modal" class="sheet" hidden role="dialog" aria-label="Exercise"></div>
-<div id="sun" class="sun" hidden role="dialog" aria-label="Sunrise alarm"><div class="suntop"><div id="sunTime" class="suntime"></div><p id="sunInfo" class="suninfo"></p></div><div class="sunbot"><button id="sunUp" class="sunup" data-act="sun-up" hidden>I’m up</button><button id="sunCancel" class="suncancel" data-act="sun-cancel">Turn off alarm</button><p id="sunWarn" class="sunwarn"></p></div></div>
+<div id="sun" class="sun" hidden role="dialog" aria-label="Sunrise alarm"><div id="sunMain" class="sunmain"><div class="suntop"><div id="sunTime" class="suntime"></div><p id="sunInfo" class="suninfo"></p></div><div class="sunbot"><button id="sunUp" class="sunup" data-act="sun-up" hidden>I’m up</button><button id="sunCancel" class="suncancel" data-act="sun-cancel">Turn off alarm</button><p id="sunWarn" class="sunwarn"></p></div></div><div id="sunPray" class="sunpray" hidden></div></div>
 <div id="rest" class="rest" hidden role="dialog" aria-label="Rest timer">
   <div class="restcard">
     <p class="muted" style="font-weight:700">Rest</p>
@@ -587,7 +596,7 @@ const PAL = {
  graphite:{n:'Graphite',l:{w0:'#eef0f3',w1:'#b6bfcc',w2:'#dde2e8',w3:'#97a4b7',accent:'#2f3b4f'},d:{w0:'#0d0e11',w1:'#3a404b',w2:'#20242c',w3:'#4b5466',accent:'#d0d8e4'}}
 };
 
-const DEFAULTS = {name:'',wife:'',big:'',baby:'',palette:'lake',wall:'waves',mode:'auto',bible:'1713',rest:60,water:120,wake:'05:00',sunLen:20,sunStart:'',wknd:false,wkndWake:'07:00',wkndStart:'',pausebox:false,partner:'',partnerPhone:'',fastStart:'12:00',fastEnd:'20:00',cal:0,
+const DEFAULTS = {name:'',wife:'',big:'',baby:'',palette:'lake',wall:'waves',mode:'auto',bible:'1713',rest:60,water:120,startWeight:326,wake:'05:00',sunLen:20,sunStart:'',wknd:false,wkndWake:'07:00',wkndStart:'',pausebox:false,partner:'',partnerPhone:'',fastStart:'12:00',fastEnd:'20:00',cal:0,
   lock:[{s:'17:15',e:'20:30'},{s:'22:00',e:'04:00'}]};
 
 /* ---------- Built-in food list (approximate calories). Ask Claude to add more. ---------- */
@@ -834,7 +843,8 @@ function flags(d,k){const wo=workoutMet(d,k),fam=d.wife.done||d.fam.done.length>
 function streak(f='all'){let n=0;const tk=todayKey(),live=flags(day(),tk);const dt=new Date();if(!live[f])dt.setDate(dt.getDate()-1);
   for(let i=0;i<400;i++){const k=keyOf(dt);const ok=k===tk?live[f]:S.hist[k]?.[f];if(!ok)break;n++;dt.setDate(dt.getDate()-1)}return n}
 const STREAK_FOR={home:['all','Everything done'],quiet:['qt','Quiet time'],workout:['wo','Workout'],family:['fam','Family'],food:['food','Water and fasting']};
-function appbar(){const [f,l]=STREAK_FOR[tab];const n=streak(f);return `<div class="appbar"><span class="mark">${LOGO}</span><span class="pill" role="img" aria-label="${l} streak: ${n} day${n===1?'':'s'}">⚡ ${n}</span></div>`}
+function alarmPillText(){return '⏰ '+new Date(nextWake()).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}).replace(/\s?(AM|PM)/i,(m,x)=>x.toLowerCase()[0])}
+function appbar(){const [f,l]=STREAK_FOR[tab];const n=streak(f);return `<div class="appbar"><span class="mark">${LOGO}</span><span class="pills"><button class="pill apill" data-act="alarm-open" aria-label="Sunrise alarm settings">${alarmPillText()}</button><span class="pill" role="img" aria-label="${l} streak: ${n} day${n===1?'':'s'}">⚡ ${n}</span></span></div>`}
 
 /* ---------- theme / wallpaper ---------- */
 function isDark(){const m=S.settings.mode;return m==='dark'||(m==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches)}
@@ -885,7 +895,6 @@ function viewHome(){
   ${morningCard(d,th)}
   ${(new Date().getHours()>=4&&new Date().getHours()<10&&!d.qt.done)?prayerCard():''}
   ${lockCard(d,k)}
-  ${sunriseCard()}
   <section class="card"><h2>Today</h2>
     ${items.map(i=>`<button class="trow" data-act="tab" data-v="${i.go}"><span class="tico">${ic(i.icon)}</span><span class="grow"><b>${i.t}</b><small>${i.sub}</small></span><span class="chk ${i.done?'on':''}">${ic('check',16)}</span></button>`).join('')}
   </section>
@@ -1064,20 +1073,14 @@ function viewSettings(){
   const s=S.settings,dk=isDark()?'d':'l';
   const field=(k,l,ph)=>`<label class="fstack"><span>${l}</span><input type="text" data-set="${k}" value="${esc(s[k])}" placeholder="${ph}" autocomplete="off"></label>`;
   return `<div class="sheet-in"><div class="sheethead"><h2 class="display sm">Settings</h2><button class="btn small" data-act="close-settings">Done</button></div>
-  <section class="card"><h3>Your family</h3>${field('name','Your name','First name')}${field('wife','Wife’s name','Her name')}${field('big','Oldest child','Name')}${field('baby','Baby','Name')}</section>
+  <section class="card"><h3>Your family</h3>${field('name','Your name','First name')}${field('wife','Wife’s name','Her name')}<label class="fstack"><span>Her phone number</span><input type="tel" data-set="wifePhone" value="${esc(s.wifePhone||'')}" placeholder="For texting date night plans" autocomplete="off"></label>${field('big','Oldest child','Name')}${field('baby','Baby','Name')}</section>
   <section class="card"><h3>Accountability partner</h3>${field('partner','Name','Who you check in with')}<label class="fstack"><span>Phone number</span><input type="tel" data-set="partnerPhone" value="${esc(s.partnerPhone||'')}" placeholder="For one-tap texting" autocomplete="off"></label></section>
-  <section class="card"><h3>Sunrise alarm</h3><p class="muted small">Pick when the screen starts to glow and when the bells ring.</p>
-    <label class="frow"><span>Sunrise starts</span><input type="time" data-set="sunStart" value="${esc(s.sunStart||(()=>{const[a,b]=hm(s.wake,'05:00');const t=a*60+b-(+s.sunLen||20);const m=(t+1440)%1440;return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0')})())}"></label>
-    <label class="frow"><span>Bells ring</span><input type="time" data-set="wake" value="${esc(s.wake||'05:00')}"></label>
-    <button class="toggle" data-act="wknd-toggle"><span class="chk ${s.wknd?'on':''}">${ic('check',16)}</span><span class="grow"><b>Different times on weekends</b><small>Saturday and Sunday</small></span></button>
-    ${s.wknd?`<label class="frow"><span>Weekend sunrise starts</span><input type="time" data-set="wkndStart" value="${esc(s.wkndStart||'06:40')}"></label><label class="frow"><span>Weekend bells ring</span><input type="time" data-set="wkndWake" value="${esc(s.wkndWake||'07:00')}"></label>`:''}
-    <button class="btn ghost" style="margin-top:8px" data-act="sun-start">Start sunrise alarm now</button>
-    <button class="btn ghost" style="margin-top:8px" data-act="sun-test">Test the bells (10 seconds)</button></section>
+  <section class="card"><h3>Sunrise alarm</h3>${alarmSettings()}<button class="btn" style="margin-top:10px" data-act="sun-start">Start sunrise alarm</button></section>
   <section class="card"><h3>Color</h3><div class="swatches">${Object.entries(PAL).map(([id,p])=>`<button class="sw ${s.palette===id?'on':''}" data-act="pal" data-v="${id}" aria-pressed="${s.palette===id}"><span class="tile">${wallSVG(p[dk],s.wall,'sw'+id)}</span><em>${p.n}</em></button>`).join('')}</div>
     <h3>Wallpaper</h3><div class="seg">${['waves','blobs','rings'].map(w=>`<button class="${s.wall===w?'on':''}" data-act="wall" data-v="${w}">${cap(w)}</button>`).join('')}</div>
     <h3>Appearance</h3><div class="seg">${[['auto','Auto'],['light','Light'],['dark','Dark']].map(([v,l])=>`<button class="${s.mode===v?'on':''}" data-act="mode" data-v="${v}">${l}</button>`).join('')}</div></section>
   <section class="card"><h3>Bible</h3><label class="frow"><span>Translation</span><select data-set="bible">${VERSIONS.map(v=>`<option value="${v[0]}" ${v[0]===s.bible?'selected':''}>${v[1]}</option>`).join('')}</select></label></section>
-  <section class="card"><h3>Workout</h3><label class="frow"><span>Rest timer (seconds)</span><input type="number" inputmode="numeric" data-set="rest" value="${s.rest}" min="15" max="300" step="15"></label></section>
+  <section class="card"><h3>Workout</h3><label class="frow"><span>Starting weight (lb)</span><input type="number" inputmode="decimal" data-set="startWeight" value="${esc(s.startWeight||'')}"></label><label class="frow"><span>Rest timer (seconds)</span><input type="number" inputmode="numeric" data-set="rest" value="${s.rest}" min="15" max="300" step="15"></label></section>
   ${planEditor()}
   <section class="card"><h3>My foods</h3><p class="muted small">Exact numbers for things you eat often. When a meal mentions one by name, Steadfast uses these numbers first.</p>
     ${(s.foods||[]).map(f=>`<div class="mfrow"><input type="text" data-mf="name" data-id="${f.id}" value="${esc(f.name)}" placeholder="Food name" aria-label="Food name"><label class="calbox"><input type="number" inputmode="numeric" data-mf="cal" data-id="${f.id}" value="${esc(f.cal)}" placeholder="0" aria-label="Calories"><span>cal</span></label><label class="calbox"><input type="number" inputmode="numeric" data-mf="p" data-id="${f.id}" value="${esc(f.p)}" placeholder="0" aria-label="Protein grams"><span>g pro</span></label><button class="iconbtn sm" data-act="mf-del" data-v="${f.id}" aria-label="Remove ${esc(f.name||'food')}">${ic('x',16)}</button></div>`).join('')}
@@ -1100,7 +1103,7 @@ function viewSettings(){
       <li><b>Using PauseBox?</b> In the Shortcuts app, make a shortcut named exactly <b>Steadfast Lockdown</b> with PauseBox’s Start Pause Session action and your Pause Group. The Start PauseBox button on Home runs it. Tap your PauseBox to unlock once you’ve earned it.</li>
       <li><b>Start it automatically.</b> In Shortcuts, tap Automation, then +, then Time of Day. Set ${fmt12(s.lock[0].s)}, Daily, choose Run Immediately, and add PauseBox’s Start Pause Session action. Make a second one for ${fmt12(s.lock[1].s)}.</li>
     </ol></details></section>
-  <p class="muted small" style="text-align:center;margin:6px 0 0">Steadfast version: Oct 27, sunrise alarm</p>
+  <p class="muted small" style="text-align:center;margin:6px 0 0">Steadfast version: Oct 28, alarm sounds</p>
   <section class="card"><button class="btn ghost" data-act="reset-day">${resetArmed?'Tap again to clear today':'Clear today’s entries'}</button></section></div>`;
 }
 
@@ -1141,16 +1144,23 @@ function prayerList(){const P=S.prayers||[],act=P.filter(p=>!p.ans),ans=P.filter
   ${act.length?act.map(p=>`<div class="prrow"><div class="grow"><span class="tag">${esc(p.cat)}</span><b>${esc(p.t)}</b><small>Since ${new Date(p.at).toLocaleDateString([], {month:'short',day:'numeric'})}</small></div><button class="btn small ghost" data-act="pr-ans" data-v="${p.id}">Answered</button><button class="iconbtn sm" data-act="pr-del" data-v="${p.id}" aria-label="Remove request">${ic('x',16)}</button></div>`).join(''):'<p class="muted small" style="margin-top:10px">Nothing on your list yet.</p>'}
   ${ans.length?`<button class="link" data-act="pr-showans">${showAnswered?'Hide':'Show'} ${ans.length} answered prayer${ans.length===1?'':'s'}</button>${showAnswered?ans.slice().reverse().map(p=>`<div class="prrow answered"><div class="grow"><span class="tag">${esc(p.cat)}</span><b>${esc(p.t)}</b><small>Answered ${new Date(p.ans).toLocaleDateString([], {month:'short',day:'numeric'})}</small></div><button class="iconbtn sm" data-act="pr-del" data-v="${p.id}" aria-label="Remove">${ic('x',16)}</button></div>`).join(''):''}`:''}
   </section>`}
+function dateText(){const D=S.dates||{},nm=S.settings.wife||'',hi=nm?`Hey ${nm}`:'Hey babe';let msg;
+  if(D.next&&D.next.day){const dl=new Date(fromKey(D.next.day)).toLocaleDateString([], {weekday:'long',month:'short',day:'numeric'});msg=`${hi}! I’m planning a date night for us on ${dl}: ${D.next.idea||'just you and me'}. I’ll take care of the kids and the details. Can’t wait to spend time with you. Love you.`}
+  else{const ideas=[0,1,2].map(i=>DATE_IDEAS[(dn()+ideaSeed*3+i*5)%DATE_IDEAS.length]);msg=`${hi}, I want to plan a date night with you this week. Which sounds best?\n1. ${ideas[0]}\n2. ${ideas[1]}\n3. ${ideas[2]}\nOr tell me what you’d love to do. Love you.`}
+  const ph=String(S.settings.wifePhone||'').replace(/[^\d+]/g,'');
+  if(ph){window.location.href=`sms:${ph}&body=${encodeURIComponent(msg)}`;return}
+  if(navigator.share){navigator.share({text:msg}).catch(()=>{});return}
+  try{navigator.clipboard.writeText(msg).then(()=>toast('Copied. Paste it in a text to her.'),()=>toast('Add her number in Settings to text in one tap.'))}catch(e){toast('Add her number in Settings to text in one tap.')}}
 function lastDate(){const L=(S.dates&&S.dates.log)||[];return L.length?L[L.length-1]:null}
 function dateCard(){S.dates=S.dates||{log:[],next:null};const D=S.dates,last=lastDate(),since=last?dn()-dn(last.day):null,nudge=since==null||since>=10;
   const ideas=[0,1,2].map(i=>DATE_IDEAS[(dn()+ideaSeed*3+i*5)%DATE_IDEAS.length]);
   let body;
   if(D.next&&D.next.day)body=`<p class="idea" style="font-size:18px">${new Date(fromKey(D.next.day)).toLocaleDateString([], {weekday:'long',month:'short',day:'numeric'})}: ${esc(D.next.idea||'Date night')}</p>
-    <div class="row2"><button class="btn" data-act="date-done">We did it</button><button class="btn ghost" data-act="date-clear">Change plans</button></div>`;
+    <div class="row2"><button class="btn" data-act="date-done">We did it</button><button class="btn ghost" data-act="date-clear">Change plans</button></div><button class="btn ghost" style="margin-top:10px" data-act="date-text">${ic('heart',18)} Text ${esc(W())} the plan</button>`;
   else body=`<label class="fstack"><span>When</span><input type="date" id="dtDay" value="${keyOf(new Date(Date.now()+((5-new Date().getDay()+7)%7||7)*864e5))}"></label>
     <label class="fstack"><span>What</span><input type="text" id="dtIdea" placeholder="Tap an idea or write your own"></label>
     <div class="rchips" style="margin-top:8px">${ideas.map(t=>`<button class="rchip" data-act="date-idea" data-v="${esc(t)}">${esc(t)}</button>`).join('')}<button class="rchip" data-act="date-more">More ideas</button></div>
-    <button class="btn" style="margin-top:12px" data-act="date-plan">Plan it</button>`;
+    <button class="btn" style="margin-top:12px" data-act="date-plan">Plan it</button><button class="btn ghost" style="margin-top:10px" data-act="date-text">${ic('heart',18)} Text ${esc(W())} these ideas</button>`;
   return `<section class="card ${nudge&&!(D.next&&D.next.day)?'nudge':''}"><div class="cardhead"><h2>Date night</h2><span class="small muted">${since==null?'None logged yet':since===0?'Last one: today':`Last one: ${since} day${since===1?'':'s'} ago`}</span></div>
   ${nudge&&!(D.next&&D.next.day)?`<p class="small" style="font-weight:700;color:var(--accent)">It’s been a while. Plan one with ${esc(W())} this week.</p>`:''}${body}</section>`}
 function chartSVG(pts,unit){if(pts.length<2)return '<p class="muted small" style="margin-top:8px">Log at least two entries to see your trend.</p>';
@@ -1164,10 +1174,11 @@ function progressCard(){const Wt=(S.weights||[]).slice(-16),last=Wt[Wt.length-1]
   const ch=last&&first&&Wt.length>1?Math.round((last.w-first.w)*10)/10:null;
   return `<section class="card"><h2>Progress</h2>
   <h3>Body weight</h3><div class="composer"><label class="calbox"><input type="number" inputmode="decimal" step="0.1" id="wtIn" placeholder="${last?last.w:'0'}" aria-label="Body weight in pounds"><span>lb</span></label><button class="btn" data-act="wt-log">Log weight</button></div>
-  ${last?`<p class="muted small" style="margin-top:6px">Latest ${last.w} lb${ch!=null?`, ${ch>0?'+':''}${ch} lb since ${new Date(fromKey(first.day)).toLocaleDateString([], {month:'short',day:'numeric'})}`:''}.</p>`:''}
+  ${last&&+S.settings.startWeight?`<p class="bigwin">${Math.round((+S.settings.startWeight-last.w)*10)/10} lb lost since you started at ${S.settings.startWeight}</p>`:''}${last?`<p class="muted small" style="margin-top:6px">Latest ${last.w} lb${ch!=null?`, ${ch>0?'+':''}${ch} lb since ${new Date(fromKey(first.day)).toLocaleDateString([], {month:'short',day:'numeric'})}`:''}.</p>`:''}
   ${chartSVG(Wt.map(x=>({v:+x.w})),'lb')}
   <h3>Strength</h3>${names.length?`<select data-in="progex" aria-label="Exercise">${names.map(n=>`<option ${n===progEx?'selected':''}>${esc(n)}</option>`).join('')}</select>
   ${L.length?`<p class="muted small" style="margin-top:6px">Top set: ${L[0].w} lb → ${L[L.length-1].w} lb over ${L.length} workout${L.length===1?'':'s'}.</p>`:''}${chartSVG(L.map(x=>({v:+x.w})),'lb')}`:'<p class="muted small">Finish a few workouts and your top weights will chart here.</p>'}</section>`}
+function weightLine(){const all=S.weights||[],cur=all.length?+all[all.length-1].w:null,st=+S.settings.startWeight||0;if(cur==null||!st)return null;const lost=Math.round((st-cur)*10)/10;return lost>0?`Weight lost: ${lost} lb since I started`:'Weight lost: still working on it'}
 function buildReport(){const t=new Date(),days=[];for(let i=6;i>=0;i--){const x=new Date(t);x.setDate(t.getDate()-i);days.push(keyOf(x))}
   const H=k=>k===todayKey()?flags(day(),k):(S.hist[k]||{});let qt=0,wf=0,lifts=0,liftDays=0,walk=false,kids=0;
   days.forEach(k=>{const h=H(k),dow=fromKey(k).getDay(),P=PLAN[dow];if(h.qt)qt++;if(h.wf)wf++;if(P.ex){liftDays++;if(h.wo)lifts++}if(P.walk&&h.wo)walk=true;const dd=S.days[k];if(dd)kids+=dd.fam.done.length});
@@ -1179,7 +1190,7 @@ function buildReport(){const t=new Date(),days=[];for(let i=6;i>=0;i--){const x=
     `Quiet time: ${qt} of 7 days`,`Workouts: ${lifts} of ${liftDays} lifting days${PLAN[6].walk?`, Saturday walk: ${walk?'yes':'not yet'}`:''}`,
     `Loved ${W()} intentionally: ${wf} of 7 days`,`Kids challenges: ${kids}`,`Date night: ${dt.length?dt.map(x=>x.idea||'yes').join('; '):'not this week'}`,
     `Memory verse: ${m.ref} (practiced ${mrev} day${mrev===1?'':'s'})`,answered?`Answered prayers: ${answered}`:null,
-    Wt.length?`Weight: ${Wt[Wt.length-1].w} lb`:null,'','Win this week: ','Pray for me about: '].filter(x=>x!==null).join('\n')}
+    weightLine(),'','Win this week: ','Pray for me about: '].filter(x=>x!==null).join('\n')}
 function reportCard(){const dow=new Date().getDay(),p=S.settings.partner;
   return `<section class="card ${dow===0?'nudge':''}"><div class="cardhead"><h2>Weekly check-in</h2>${dow===0?'<span class="small" style="font-weight:700;color:var(--accent)">Today</span>':''}</div>
   <p class="muted small">A short summary of your week to send ${p?esc(p):'your accountability partner'}. Sundays are a good rhythm.</p>
@@ -1191,15 +1202,44 @@ function viewReport(){const p=S.settings.partner,ph=String(S.settings.partnerPho
   ${ph?'':'<p class="muted small" style="margin-top:10px">Add your partner’s name and number in Settings to text it in one tap.</p>'}</section></div>`}
 /* Sunrise alarm */
 let SUN=null;
+const DAYKEY=d=>d===0?'sun':d===6?'sat':'wk';
+const DAYLBL={wk:'Weekdays',sat:'Saturday',sun:'Sunday'};
+const SOUNDS={bells:'Bells',piano:'Soft piano',birds:'Birdsong'};
 function hm(t,def){const v=String(t||def).split(':').map(Number);return[v[0]||0,v[1]||0]}
-function alarmFor(date){const S2=S.settings,we=S2.wknd&&(date.getDay()===0||date.getDay()===6);
-  const wake=hm(we?S2.wkndWake:S2.wake,we?'07:00':'05:00');const st=(we?S2.wkndStart:S2.sunStart)||'';
-  const w=new Date(date);w.setHours(wake[0],wake[1],0,0);let len;
-  if(st){const a=hm(st);const s0=new Date(w);s0.setHours(a[0],a[1],0,0);if(s0>=w)s0.setDate(s0.getDate()-1);len=w-s0;if(len>3*3600000||len<60000)len=(+S2.sunLen||20)*60000}
-  else len=(+S2.sunLen||20)*60000;
-  return{wake:w.getTime(),len}}
+function minus(r,len){const[a,b]=hm(r,'05:00');const m=((a*60+b-len)%1440+1440)%1440;return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0')}
+function alarmCfg(){const s=S.settings;if(!s.alarm||!s.alarm.wk){const len=+s.sunLen||20,wr=s.wake||'05:00';
+    s.alarm={wk:{s:s.sunStart||minus(wr,len),r:wr},sat:{s:s.wknd&&s.wkndStart?s.wkndStart:minus(s.wknd&&s.wkndWake?s.wkndWake:'07:00',20),r:s.wknd&&s.wkndWake?s.wkndWake:'07:00'},sun:{s:minus('06:30',20),r:'06:30'},sound:'bells',ramp:3}}
+  return s.alarm}
+function alarmFor(date){const A=alarmCfg()[DAYKEY(date.getDay())];const r=hm(A.r,'05:00'),st=hm(A.s||A.r,'05:00');
+  const w=new Date(date);w.setHours(r[0],r[1],0,0);const s0=new Date(w);s0.setHours(st[0],st[1],0,0);if(s0>w)s0.setDate(s0.getDate()-1);
+  let len=w-s0;if(len>3*3600000)len=20*60000;return{wake:w.getTime(),len:Math.max(0,len)}}
 function nextAlarm(){const n=new Date();for(let i=0;i<3;i++){const d=new Date(n);d.setDate(n.getDate()+i);const a=alarmFor(d);if(a.wake>n.getTime())return a}return alarmFor(new Date(n.getTime()+864e5))}
 function nextWake(){return nextAlarm().wake}
+/* sound: synthesized on the phone, played through a media element so it plays even in silent mode */
+const SR=16000;
+function baseLoop(kind){const secs=kind==='bells'?21.6:kind==='piano'?19.2:20,n=Math.floor(SR*secs),b=new Float32Array(n);
+  const add=(t0,fn,dur)=>{const a=Math.floor(t0*SR),e=Math.min(n,a+Math.floor(dur*SR));for(let i=a;i<e;i++)b[i]+=fn((i-a)/SR)};
+  const P2=2*Math.PI;
+  if(kind==='bells'){for(let t=0;t<secs-.5;t+=3.6)[523.25,659.25,783.99,1046.5].forEach((f,k)=>add(t+k*.32,x=>Math.exp(-x*2.2)*(Math.sin(P2*f*x)+.3*Math.sin(P2*f*2.01*x)+.12*Math.sin(P2*f*3.02*x)),2.4))}
+  else if(kind==='piano'){const ch=[[261.63,329.63,392],[220,261.63,329.63],[174.61,220,261.63],[196,246.94,293.66]];let c=0;
+    for(let t=0;t<secs-.5;t+=2.4){ch[c%4].forEach((f,k)=>add(t+k*.14,x=>Math.exp(-x*1.5)*(Math.sin(P2*f*x)+.45*Math.exp(-x*2)*Math.sin(P2*f*2*x)+.18*Math.exp(-x*3)*Math.sin(P2*f*3*x)),2.4));c++}}
+  else{let seed=11;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280};
+    const chirp=(base,dur,up)=>{let ph=0;return x=>{const p=x/dur,f=base+(up?600*p:-500*p)+500*Math.sin(Math.PI*p);ph+=P2*f/SR;return Math.sin(ph)*Math.pow(Math.sin(Math.PI*p),1.5)}};
+    for(let t=.2;t<secs-1;t+=.8+rnd()*1.3){const base=2300+rnd()*1500,k=2+Math.floor(rnd()*4),d=.06+rnd()*.06,up=rnd()>.5;for(let c=0;c<k;c++)add(t+c*(d+.035),chirp(base,d,up),d)}}
+  let pk=0;for(let i=0;i<n;i++)pk=Math.max(pk,Math.abs(b[i]));const sc=pk?.9/pk:1;for(let i=0;i<n;i++)b[i]*=sc;return b}
+function wavURL(n,sample){const buf=new ArrayBuffer(44+n*2),v=new DataView(buf);const w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
+  w(0,'RIFF');v.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,SR,true);v.setUint32(28,SR*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,n*2,true);
+  for(let i=0;i<n;i++){const x=Math.max(-1,Math.min(1,sample(i)));v.setInt16(44+i*2,x*32767,true)}
+  return URL.createObjectURL(new Blob([buf],{type:'audio/wav'}))}
+function rampClip(kind,rampSec,extraSec,startGain){const b=baseLoop(kind),L=b.length,rs=rampSec*SR,n=Math.ceil((rampSec+extraSec)*SR/L)*L;
+  return wavURL(n,i=>b[i%L]*(startGain+(1-startGain)*Math.min(1,i/rs)))}
+function loopClip(kind){const b=baseLoop(kind);return wavURL(b.length,i=>b[i])}
+const SILENT=()=>wavURL(SR/2,()=>0);
+function audioPlayback(){try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}}
+let testAudio=null;
+function testSound(){audioPlayback();const A=alarmCfg();try{if(testAudio){testAudio.pause()}}catch(e){}
+  const url=rampClip(A.sound||'bells',9,1,.06);testAudio=new Audio(url);testAudio.play().then(()=>toast(`Playing ${SOUNDS[A.sound||'bells']}, getting louder for 10 seconds.`)).catch(()=>toast('Couldn’t play sound. Turn your volume up and try again.'))}
+/* screen */
 function lerp(a,b,t){return Math.round(a+(b-a)*t)}
 function mix(c1,c2,t){const p=c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16));const a=p(c1),b=p(c2);return `rgb(${lerp(a[0],b[0],t)},${lerp(a[1],b[1],t)},${lerp(a[2],b[2],t)})`}
 function ramp(stops,p){for(let i=1;i<stops.length;i++){if(p<=stops[i][0]){const[a,c1]=stops[i-1],[b,c2]=stops[i];return mix(c1,c2,(p-a)/(b-a||1))}}return mix(stops[stops.length-1][1],stops[stops.length-1][1],0)}
@@ -1210,34 +1250,45 @@ function sunBg(p){const sky=ramp([[0,'#000000'],[.25,'#14060a'],[.5,'#5a1a1e'],[
   return `radial-gradient(circle at 50% ${sy}%, ${core} 0, ${core} ${r*.45}%, transparent ${r*1.9}%), linear-gradient(to top, ${hor}, ${sky})`}
 async function sunWake(){try{if('wakeLock' in navigator){SUN.lock=await navigator.wakeLock.request('screen');SUN.lockOk=true}else SUN.lockOk=false}catch(e){SUN.lockOk=false}}
 function sunVis(){if(SUN&&document.visibilityState==='visible')sunWake()}
-async function startSunrise(){prime();try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}
-  const NA=nextAlarm();SUN={wake:NA.wake,len:NA.len,ringing:false,chime:null,keep:null,lock:null,lockOk:null,cancelArmed:false};
-  try{if(actx){const o=actx.createOscillator(),g=actx.createGain();g.gain.value=0.00001;o.connect(g);g.connect(actx.destination);o.start();SUN.keep=o}}catch(e){}
-  await sunWake();document.addEventListener('visibilitychange',sunVis);
-  const el=$('#sun');el.hidden=false;sunTick();SUN.int=setInterval(sunTick,1000)}
-function sunTick(){if(!SUN)return;const now=Date.now(),start=SUN.wake-SUN.len,p=Math.max(0,Math.min(1,(now-start)/SUN.len));
+function startSunrise(){audioPlayback();const NA=nextAlarm(),A=alarmCfg();
+  SUN={wake:NA.wake,len:NA.len,ringing:false,lock:null,lockOk:null,cancelArmed:false,el:new Audio(),urls:[]};
+  const sil=SILENT();SUN.urls.push(sil);SUN.el.src=sil;SUN.el.loop=true;SUN.el.play().catch(()=>{});
+  setTimeout(()=>{if(!SUN)return;try{SUN.ramp=rampClip(A.sound||'bells',(+A.ramp||3)*60,10,.05);SUN.loop=loopClip(A.sound||'bells');SUN.urls.push(SUN.ramp,SUN.loop)}catch(e){}},80);
+  sunWake();document.addEventListener('visibilitychange',sunVis);
+  const el=$('#sun');el.hidden=false;$('#sunPray').hidden=true;$('#sunMain').hidden=false;sunTick();SUN.int=setInterval(sunTick,1000)}
+function sunTick(){if(!SUN||SUN.praying)return;const now=Date.now(),start=SUN.wake-SUN.len,p=SUN.len?Math.max(0,Math.min(1,(now-start)/SUN.len)):(now>=SUN.wake?1:0);
   const el=$('#sun');el.style.background=sunBg(p);el.classList.toggle('lightbg',p>.62);
-  const tt=new Date();$('#sunTime').textContent=tt.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
-  $('#sunInfo').textContent=SUN.ringing?'Good morning. Time to rise.':now<start?`Alarm ${new Date(SUN.wake).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}. Sunrise begins ${new Date(start).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}.`:'The sun is coming up…';
-  $('#sunWarn').textContent=SUN.lockOk===false?'Your screen might lock tonight. Set Auto-Lock to Never in Settings, then Display & Brightness.':'Leave Steadfast open on the charger, screen up.';
+  const f=x=>new Date(x).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+  $('#sunTime').textContent=f(now);
+  $('#sunInfo').textContent=SUN.ringing?'Good morning. Time to rise.':now<start?`Bells at ${f(SUN.wake)}. Sunrise begins ${f(start)}.`:'The sun is coming up…';
+  $('#sunWarn').textContent=SUN.lockOk===false?'Your screen might lock tonight. Set Auto-Lock to Never in Settings, then Display & Brightness.':'Leave Steadfast open on the charger, screen up, volume up.';
   $('#sunUp').hidden=!SUN.ringing;$('#sunCancel').hidden=SUN.ringing;$('#sunCancel').textContent=SUN.cancelArmed?'Tap again to turn off':'Turn off alarm';
   if(now>=SUN.wake&&!SUN.ringing){SUN.ringing=true;ringStart()}}
-function bell(t,f,v){const o=actx.createOscillator(),o2=actx.createOscillator(),g=actx.createGain();o.type='sine';o2.type='sine';o.frequency.value=f;o2.frequency.value=f*2.01;
-  const g2=actx.createGain();g2.gain.value=.3;o.connect(g);o2.connect(g2);g2.connect(g);g.connect(SUN.master);
-  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+2.4);o.start(t);o2.start(t);o.stop(t+2.5);o2.stop(t+2.5)}
-function ringStart(){if(!actx)return;try{actx.resume()}catch(e){}
-  SUN.master=actx.createGain();SUN.master.connect(actx.destination);const t0=actx.currentTime;SUN.master.gain.setValueAtTime(.05,t0);SUN.master.gain.linearRampToValueAtTime(1,t0+180);
-  const play=()=>{const t=actx.currentTime+.05;[523.25,659.25,783.99,1046.5].forEach((f,i)=>bell(t+i*.32,f,.6))};play();SUN.chime=setInterval(play,3600)}
-function stopSunrise(up){if(!SUN)return;clearInterval(SUN.int);clearInterval(SUN.chime);try{SUN.keep&&SUN.keep.stop()}catch(e){}try{SUN.master&&SUN.master.disconnect()}catch(e){}try{SUN.lock&&SUN.lock.release()}catch(e){}
+function ringStart(){const a=SUN.el;audioPlayback();
+  const go=()=>{if(!SUN)return;if(!SUN.ramp){setTimeout(go,300);return}a.loop=false;a.src=SUN.ramp;a.onended=()=>{if(!SUN)return;a.src=SUN.loop;a.loop=true;a.play().catch(()=>{})};a.play().catch(()=>{try{prime();if(actx){const t=actx.currentTime;const g=actx.createGain();g.connect(actx.destination);g.gain.value=.8;const o=actx.createOscillator();o.frequency.value=660;o.connect(g);o.start(t);o.stop(t+60)}}catch(e){}})};go()}
+function stopSound(){if(!SUN)return;try{SUN.el.onended=null;SUN.el.pause();SUN.el.src=''}catch(e){}SUN.urls.forEach(u=>{try{URL.revokeObjectURL(u)}catch(e){}})}
+function showWakePrayer(){if(!SUN)return;stopSound();SUN.praying=true;clearInterval(SUN.int);const P=PRAYERS[new Date().getDay()],el=$('#sun');
+  el.style.background=sunBg(1);el.classList.add('lightbg');$('#sunMain').hidden=true;const pr=$('#sunPray');
+  pr.innerHTML=`<p class="sunk">Good morning. Start with prayer.</p><h2 class="sunh">${esc(P.t)}</h2><div class="sunparts">${P.p.map(([h,t])=>`<div><b>${fill(h)}</b><p>${fill(t)}</p></div>`).join('')}</div><button class="sunup" data-act="sun-done">Amen. Let’s go.</button>`;pr.hidden=false}
+function stopSunrise(up){if(!SUN)return;clearInterval(SUN.int);stopSound();try{SUN.lock&&SUN.lock.release()}catch(e){}
   document.removeEventListener('visibilitychange',sunVis);SUN=null;$('#sun').hidden=true;
-  if(up){const d=day();d.morning=d.morning||{};d.morning.up=Date.now();markDay();tab='home';render();window.scrollTo(0,0);toast('Good morning. Start with water and prayer.')}}
-function sunriseCard(){const NA=nextAlarm(),w=new Date(NA.wake),st=new Date(NA.wake-NA.len),f=x=>x.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
-  return `<section class="card"><div class="lockline">${ic('moon')}<h2>Sunrise alarm</h2></div><p class="muted" style="margin-top:4px">Sunrise starts at ${f(st)} and bells ring at ${f(w)}. Your screen glows brighter until then, and the bells build from soft to loud.</p>
-  <button class="btn" style="margin-top:12px" data-act="sun-start">Start sunrise alarm</button><button class="link" data-act="open-settings">Change times</button><p class="muted small" style="margin-top:8px">Phone on the charger, screen up, Steadfast open. Keep a Clock alarm 5 minutes later as a backup.</p></section>`}
+  if(up){const d=day();d.morning=d.morning||{};d.morning.up=Date.now();d.morning.pray=true;markDay();tab='home';render();window.scrollTo(0,0);toast('Have a great day. Water next.')}}
+function alarmSettings(){const A=alarmCfg();
+  return `<div class="altimes"><span></span><span class="small muted">Glow starts</span><span class="small muted">Bells ring</span>${['wk','sat','sun'].map(k=>`<b>${DAYLBL[k]}</b><input type="time" data-alarm="${k}-s" value="${esc(A[k].s)}" aria-label="${DAYLBL[k]} glow starts"><input type="time" data-alarm="${k}-r" value="${esc(A[k].r)}" aria-label="${DAYLBL[k]} bells ring">`).join('')}</div>
+  <h3>Sound</h3><div class="seg">${Object.entries(SOUNDS).map(([k,l])=>`<button class="${(A.sound||'bells')===k?'on':''}" data-act="alarm-sound" data-v="${k}">${l}</button>`).join('')}</div>
+  <h3>Gets loud over</h3><div class="seg">${[1,2,3,5].map(n=>`<button class="${(+A.ramp||3)===n?'on':''}" data-act="alarm-ramp" data-v="${n}">${n} min</button>`).join('')}</div>
+  <button class="btn ghost" style="margin-top:12px" data-act="sun-test">Hear it (10 seconds)</button>
+  <p class="muted small" style="margin-top:8px">Sound starts quiet and gets louder until it’s at full volume, then keeps going until you tap I’m up. Turn your phone’s volume all the way up before bed.</p>`}
+function viewAlarm(){const NA=nextAlarm(),f=x=>new Date(x).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}),dl=new Date(NA.wake).toLocaleDateString([], {weekday:'long'});
+  return `<div class="sheet-in"><div class="sheethead"><h2 class="display sm">Sunrise alarm</h2><button class="btn small ghost" data-act="modal-close">Close</button></div>
+  <section class="card accent"><p class="muted" style="font-weight:700">Next alarm: ${dl}</p><p class="faststate">${f(NA.wake)}</p><p class="muted" style="margin-top:4px">Glow starts ${f(NA.wake-NA.len)}. After you wake, today’s prayer is waiting on screen.</p>
+    <button class="btn mbtn" data-act="sun-start">Start sunrise alarm</button></section>
+  <section class="card"><h3>Times</h3>${alarmSettings()}</section>
+  <p class="muted small" style="text-align:center;margin:0 0 20px">Phone on the charger, screen up, Steadfast open. Keep a Clock alarm 5 minutes later as a backup.</p></div>`}
 
 /* ---------- toast, sound ---------- */
 let toastT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2800)}
-let actx=null;function prime(){try{if(!actx){const A=window.AudioContext||window.webkitAudioContext;if(A)actx=new A()}if(actx&&actx.state==='suspended')actx.resume()}catch(e){}}
+let actx=null;function prime(){try{audioPlayback();if(!actx){const A=window.AudioContext||window.webkitAudioContext;if(A)actx=new A()}if(actx&&actx.state==='suspended')actx.resume()}catch(e){}}
 function beep(){try{if(actx){[0,.22].forEach(off=>{const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;o.connect(g);g.connect(actx.destination);const t=actx.currentTime+off;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.3,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.18);o.start(t);o.stop(t+.2)})}}catch(e){}try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}}
 
 /* ---------- rest timer ---------- */
@@ -1436,9 +1487,14 @@ document.addEventListener('click',e=>{
     case 'report-share':{const t=($('#repText')||{}).value||lastReport;lastReport=t;if(navigator.share){navigator.share({text:t}).catch(()=>{})}else{try{navigator.clipboard.writeText(t);toast('Copied. Paste it into a text.')}catch(e){toast('Select the text and copy it.')}}break}
     case 'report-copy':{const t=($('#repText')||{}).value||lastReport;lastReport=t;try{navigator.clipboard.writeText(t).then(()=>toast('Copied.'),()=>toast('Select the text and copy it.'))}catch(e){toast('Select the text and copy it.')}break}
     case 'report-sms':{const t=($('#repText')||{}).value||lastReport;lastReport=t;const ph=String(S.settings.partnerPhone||'').replace(/[^\d+]/g,'');window.location.href=`sms:${ph}&body=${encodeURIComponent(t)}`;break}
-    case 'sun-start':$('#sheet').hidden=true;startSunrise();break;
-    case 'sun-test':{prime();try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}if(!actx){toast('Sound isn’t available here.');break}const was=SUN;SUN={master:actx.createGain()};SUN.master.connect(actx.destination);SUN.master.gain.value=.5;const t=actx.currentTime+.05;[0,3.6,7.2].forEach(o=>[523.25,659.25,783.99,1046.5].forEach((f,i)=>bell(t+o+i*.32,f,.6)));const mm=SUN.master;SUN=was;setTimeout(()=>{try{mm.disconnect()}catch(e){}},11000);break}
-    case 'sun-up':stopSunrise(true);break;
+    case 'sun-start':$('#sheet').hidden=true;closeModal();startSunrise();break;
+    case 'sun-test':testSound();break;
+    case 'sun-up':showWakePrayer();break;
+    case 'sun-done':stopSunrise(true);break;
+    case 'alarm-open':openModal(viewAlarm);break;
+    case 'alarm-sound':alarmCfg().sound=v;markProf();render();break;
+    case 'alarm-ramp':alarmCfg().ramp=+v;markProf();render();break;
+    case 'date-text':dateText();break;
     case 'sun-cancel':if(!SUN)break;if(!SUN.cancelArmed){SUN.cancelArmed=true;sunTick();break}stopSunrise(false);toast('Sunrise alarm off.');break;
     case 'wknd-toggle':S.settings.wknd=!S.settings.wknd;if(S.settings.wknd&&!S.settings.wkndStart)S.settings.wkndStart='06:40';markProf();$('#sheet').innerHTML=viewSettings();break;
     case 'pb-toggle':S.settings.pausebox=!S.settings.pausebox;markProf();render();break;
@@ -1487,9 +1543,11 @@ document.addEventListener('change',e=>{
     if(k==='rest')v=Math.min(300,Math.max(15,Math.round(+v||60)));
     else if(k==='water')v=Math.max(8,Math.round(+v||120));
     else if(k==='cal')v=Math.max(0,Math.round(+v||0));
+    else if(k==='startWeight')v=Math.round((+v||0)*10)/10;
     else if((k==='fastStart'||k==='fastEnd')&&!v)return;
     else if(typeof v==='string')v=v.trim().slice(0,40);
     S.settings[k]=v;markProf();applyTheme();render()}
+  if(el.dataset.alarm&&el.value){const[k,f]=el.dataset.alarm.split('-');alarmCfg()[k][f]=el.value;markProf();renderTabs();const ab=document.querySelector('.apill');if(ab)ab.innerHTML=alarmPillText();return}
   if(el.dataset.lock&&el.value){const[i,p]=el.dataset.lock.split('-');S.settings.lock[+i][p]=el.value;markProf();render()}
   if(el.dataset.in==='water'&&tab==='home')render();
   if(el.dataset.in==='progex'){progEx=el.value;render()}
