@@ -148,6 +148,7 @@ textarea,input[type=text],input[type=number],input[type=time],select{font:inheri
 .chal{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px;margin-top:10px;border-radius:18px;border:1px solid var(--line);background:var(--field)}
 .chal .tag{display:block;font-size:13px;font-weight:700;color:var(--accent);margin-bottom:2px}
 .chal .txt{display:block;font-weight:600;line-height:1.4}
+.chalrow{display:flex;align-items:center;gap:8px;margin-top:10px}.chalrow .chal{margin-top:0;flex:1;min-width:0}
 .chal.on .txt{opacity:.6;text-decoration:line-through;text-decoration-thickness:1px}
 
 /* Workout */
@@ -514,7 +515,57 @@ const WIFE = [
  'Ask which way she feels most loved right now: words, time, help, touch, or a small gift. Then do it.',
  'Reset the living room and pick up toys before she gets to it tonight.',
  'Say “I love you” first thing this morning, before anything else.',
- 'Give up one comfort today, and every time you miss it, pray for her.'
+ 'Give up one comfort today, and every time you miss it, pray for her.',
+ 'Ask her, “What was the hardest part of your day?” and just listen.',
+ 'Write a verse reference on the bathroom mirror with a dry-erase marker for her to find.',
+ 'Take over dinner tonight, start to finish, including cleanup.',
+ 'Tell her one way you’ve seen her grow since you got married.',
+ 'Leave a note in her car or by her coffee before you head out.',
+ 'Ask what she’s been reading or listening to, and have her tell you about it.',
+ 'Pray Ephesians 3:16–19 over her by name.',
+ 'Fill her water bottle and set it next to her before she sits down.',
+ 'Handle the next diaper change before she even notices it’s needed.',
+ 'Ask her to tell you about her favorite day from this past year.',
+ 'Text her a photo of a day you loved together, with one line about why.',
+ 'Kiss her goodbye like you mean it, not a quick peck on the way out.',
+ 'Unload and reload the dishwasher before she gets up.',
+ 'Tell her one thing you’re looking forward to doing with her this year.',
+ 'Take the kids outside after dinner so she gets a quiet house.',
+ 'Ask her what she wishes people asked her about more often.',
+ 'Write down three prayers God has answered for your family and read them to her.',
+ 'Thank her for marrying you, and tell her why you’re glad she did.',
+ 'Take care of the grocery list and pickup this week.',
+ 'Sit with her during a feeding and keep her company.',
+ 'Bring her a snack and a drink without being asked.',
+ 'Ask what would make tomorrow easier for her, and set it up tonight.',
+ 'Set out the kids’ shoes, bags, and coats by the door for tomorrow.',
+ 'Send her a song that reminds you of her, with a short note.',
+ 'Tell her what you admire about the way she loves Jesus.',
+ 'Ask her, “Do you feel like we’re on the same team right now?” and really listen.',
+ 'Take a picture together, just the two of you.',
+ 'Give her 15 minutes of full attention after the kids are asleep. No phones.',
+ 'Put on worship music while you clean up together.',
+ 'Walk her to the car and open her door.',
+ 'Ask about a friend she’s been worried about, and pray for that friend together.',
+ 'Read one chapter of the Bible aloud together tonight.',
+ 'Tell her one quality you hope {big} gets from her.',
+ 'Handle wake-up and breakfast for {big} so she can ease into the morning.',
+ 'Write a short prayer for her and tuck it in her Bible.',
+ 'Ask what she misses from before kids, and find one small way to give some of it back.',
+ 'Take over bath time for both kids tonight.',
+ 'Wipe down the bathroom counters and sink before she gets to them.',
+ 'Let her pick tonight’s dinner, and you make it happen.',
+ 'Tell her you’re proud of her, and say exactly why.',
+ 'Plan a free date for this weekend and put it on the calendar.',
+ 'Ask what she’s been praying about lately, and join her in it.',
+ 'Get up first and have the house calm before she comes out.',
+ 'Ask, “What’s one thing I do that makes you feel loved?” Do it again this week.',
+ 'Tell her about your day, including something you’re struggling with.',
+ 'Tell her a story about the kids from today that you know will make her smile.',
+ 'Tidy the entryway and her nightstand.',
+ 'Thank God out loud for her during family prayer.',
+ 'Ask about something she’s excited about, and get excited with her.',
+ 'Read Psalm 121 before bed and pray it over her.'
 ];
 
 // Lockdown / family-time challenges
@@ -543,7 +594,57 @@ const KIDS_BIG = [
  'Work a puzzle together on the floor.',
  'Lie outside on a blanket and look for stars or shapes in the clouds.',
  'Write {big} a note that says “I love you because…” and read it aloud.',
- 'Build something together from blocks or cardboard boxes.'
+ 'Build something together from blocks or cardboard boxes.',
+ 'Have a tea party with {big}, cups and all.',
+ 'Let {big} put stickers all over your face, and wear them through dinner.',
+ 'Play “the floor is lava” across the living room.',
+ 'Make paper crowns and have a royal dinner.',
+ 'Read {big}’s favorite book and give every character a big voice.',
+ 'Freeze dance: pause the music and everyone freezes.',
+ 'Play Simon Says, then let {big} be Simon.',
+ 'Go on a backyard bug hunt with a flashlight.',
+ 'Wash the car together with a bucket and sponges.',
+ 'Play restaurant: {big} takes your order and serves it.',
+ 'Read Genesis 1 together and draw one thing God made on each day.',
+ 'Teach {big} to pray for a friend by name, then pray together.',
+ 'Have a stuffed-animal parade through the house.',
+ 'Play red light, green light in the yard.',
+ 'Build the tallest tower you can, then let {big} knock it down.',
+ 'Let {big} pick out your outfit for tomorrow, and wear it.',
+ 'Make up a silly song about your day together.',
+ 'Flashlight story time in a dark room.',
+ 'Play doctor and let {big} give you a checkup.',
+ 'Make a card for a grandparent or neighbor together, and deliver it.',
+ 'Practice writing {big}’s name with chalk or crayons.',
+ 'Count cars, birds, or dogs on a short walk together.',
+ 'Take {big} on a daddy date around the block, just the two of you.',
+ 'Water the plants or flowers together.',
+ 'Act out Jonah and the big fish.',
+ 'Act out Noah’s ark with stuffed animals, two by two.',
+ 'Play a matching or memory game.',
+ 'Ask {big}, “When did you feel brave today?”',
+ 'Piggyback rides around the house.',
+ 'Let {big} help fold towels and match socks.',
+ 'Bubbles in the yard. See who can pop the most.',
+ 'Animal walks across the room: bear crawl, frog jumps, crab walk.',
+ 'Make up a secret handshake together.',
+ 'Have a staring contest, then a giggle contest.',
+ 'Turn on worship music and make a band with pots and spoons.',
+ 'Let {big} brush your hair, then switch.',
+ 'Tell {big} the story of the day they were born.',
+ 'Play “What animal am I?” with sounds and guessing.',
+ 'Go on a shape hunt around the house: circles, squares, triangles.',
+ 'Ask {big} to teach you something new from this week.',
+ 'Make a sock puppet and put on a show.',
+ 'Kick a ball in the yard and celebrate every goal like it’s the big game.',
+ 'Help {big} learn Psalm 118:24, and say it together every morning this week.',
+ 'Draw a treasure map of the house and hide a surprise for {big} to find.',
+ 'Tell {big} three things you love about them at bedtime.',
+ 'Let {big} help with {baby}’s bath by handing you the towel and the soap.',
+ 'Balloon volleyball. Don’t let it touch the floor.',
+ 'Push {big} on the swings and talk about whatever {big} wants.',
+ 'Make a list with {big} of five things to thank God for, then pray through it.',
+ 'At bedtime, put your hand on {big}’s head and bless them with Numbers 6:24–26.'
 ];
 const KIDS_BABY = [
  'Tummy time on your chest while you talk to {baby}.',
@@ -557,7 +658,57 @@ const KIDS_BABY = [
  'Mirror time: hold {baby} up to a mirror and make faces together.',
  'Gentle baby massage after bath time.',
  'Handle burping and settling after the next feeding.',
- 'Hold {baby} through an entire fussy stretch so Mom can sit down.'
+ 'Hold {baby} through an entire fussy stretch so Mom can sit down.',
+ 'Lie face to face with {baby} and copy every coo back.',
+ 'Slowly move something black and white side to side and let {baby} follow it with their eyes.',
+ 'Read a picture book aloud to {baby}. Your voice matters more than the story.',
+ 'Wear {baby} in a carrier while you tidy up.',
+ 'Gentle bicycle legs during a diaper change.',
+ 'Sit outside in the shade and let {baby} watch the trees move.',
+ 'Hum softly with {baby} on your chest so your voice is felt as much as heard.',
+ 'Pray Psalm 139:13–14 over {baby}, thanking God for how He made {baby}.',
+ 'Give {baby} a slow tour of the house and name everything you see.',
+ 'Smile big and wait. See if {baby} smiles back.',
+ 'Shake a rattle softly on one side, then the other, and watch {baby} turn.',
+ 'Make up a little song with {baby}’s name in it.',
+ 'Hold {baby} on your knees facing you and just talk.',
+ 'Let {baby} grip your finger while you tell {baby} about your day.',
+ 'Make the next diaper change fun with a song and silly faces.',
+ 'Rock {baby} down for a nap.',
+ 'Get on the floor at eye level for a few minutes of tummy time on a blanket.',
+ 'Rock {baby} and pray for the friends and influences God brings into {baby}’s life.',
+ 'Gently stroke {baby}’s palms and the bottoms of their feet.',
+ 'Let {baby} nap on your chest.',
+ 'Read your Bible aloud while holding {baby}.',
+ 'Handle {baby}’s pajamas and swaddle tonight.',
+ 'Make slow, soft animal sounds and watch {baby}’s face.',
+ 'Let {baby} feel different textures: a soft blanket, a towel, your sweater.',
+ 'Hold {baby} near a window and talk about the light and shadows.',
+ 'Sing “Jesus Loves Me” slowly while you rock.',
+ 'Hold {baby} up so they can watch {big} play.',
+ 'Carry {baby} slowly around the yard in your arms.',
+ 'Tell {baby} about the day you first held them.',
+ 'Trim {baby}’s nails while Mom rests.',
+ 'Lie down on the floor next to {baby} and let {baby} study your face.',
+ 'Carry {baby} in the football hold and walk slowly through the house.',
+ 'Pray the Lord’s Prayer over {baby} at bedtime.',
+ 'Gently clap {baby}’s hands together to a song.',
+ 'Blow soft raspberries on {baby}’s tummy.',
+ 'Count {baby}’s fingers and toes out loud.',
+ 'Step outside with {baby} for a few minutes of fresh air.',
+ 'Hold {baby} during dinner so Mom can eat with both hands.',
+ 'Calm {baby} with a warm hand on the tummy and a soft shush.',
+ 'Talk to {baby} in your normal voice about your day.',
+ 'Kiss {baby}’s forehead and say “I love you” ten times.',
+ 'Hold {baby} on the porch and enjoy the evening together.',
+ 'Cheer {baby} on during tummy time for every head lift.',
+ 'Take a photo of just you and {baby}.',
+ 'Let {baby} kick freely on a play mat while you cheer.',
+ 'Swaddle {baby} and sing the same song you’ll sing every night.',
+ 'Write {baby} a short letter about who you pray {baby} will become.',
+ 'Show {baby} family photos and name each person.',
+ 'Bounce gently on the edge of the couch with {baby} until calm.',
+ 'Thank God out loud for {baby} while you hold them.'
 ];
 const KIDS_ALL = [
  'Family dinner with no devices. Everyone shares a high and a low.',
@@ -571,7 +722,57 @@ const KIDS_ALL = [
  'Once the kids are down, play a card or board game with {wife}.',
  'Everyone says one thing they love about someone else at the table.',
  'Make a simple dessert together from what’s in the pantry.',
- 'Sit on the porch together and talk about one thing God did today.'
+ 'Sit on the porch together and talk about one thing God did today.',
+ 'Have a family picnic on the living room floor.',
+ 'Read a short Bible story aloud with everyone piled on the couch.',
+ 'Make breakfast for dinner together.',
+ 'Take a family drive with worship music on.',
+ 'Pajama night: a family movie, a snack, and every blanket in the house.',
+ 'Let {big} pray for the family at dinner.',
+ 'Turn off the lights and tell stories by flashlight.',
+ 'Sing the Doxology together before dinner.',
+ 'Visit a park as a family.',
+ 'Collect fall leaves on a walk and talk about how God changes the seasons.',
+ 'Everyone shares one thing they’re thankful for today.',
+ 'Have a living room campout with blankets and flashlights.',
+ 'Start a family thankful jar and add one note each night.',
+ 'Take turns sharing a favorite family memory.',
+ 'Bake something simple together while {baby} watches.',
+ 'Write a family prayer list and put it on the fridge.',
+ 'Ten-minute family clean-up race with music on, then celebrate.',
+ 'Play hide-and-seek with {wife} and {big} while you carry {baby}.',
+ 'Eat dinner by candlelight, even if it’s just mac and cheese.',
+ 'Read Psalm 136 together and let {big} say the refrain each time.',
+ 'Take a family walk to look at the moon and stars.',
+ 'Make homemade pizzas with whatever is in the fridge.',
+ 'Walk the neighborhood and pray for each house you pass.',
+ 'Make thank-you cards for the volunteers who serve your kids at church.',
+ 'Bring a treat or a note to a neighbor as a family.',
+ 'Sit together and let {big} tell everyone a made-up story.',
+ 'Play a simple family game like Uno, Go Fish, or Candy Land.',
+ 'Baths, pajamas, then everyone piles in one bed for a story.',
+ 'Family music night: each person picks a song.',
+ 'Plan one fun thing for this weekend, and let {big} help plan it.',
+ 'No-screens evening: games, books, and talking.',
+ 'Tell the story of how you and {wife} met over dinner.',
+ 'Read Joshua 24:15 together and talk about what it means for your home.',
+ 'Look at {big}’s baby pictures and compare them to {baby}.',
+ 'Ask everyone, “Where did you see God today?”',
+ 'Family stretch time on the living room floor.',
+ 'Have dessert first one night and laugh about it.',
+ 'Draw a family picture together and hang it up.',
+ 'After the kids fall asleep, pray over each of them with {wife}.',
+ 'Take a family walk and pick up litter along the way.',
+ 'Make a family playlist of worship songs.',
+ 'Start a chapter book and read one chapter aloud after dinner each night.',
+ 'Celebrate something small tonight: a good day, a hard thing done, a new skill.',
+ 'Have a “yes night” and say yes to every reasonable request.',
+ 'Do a floor puzzle together while {baby} plays on a mat nearby.',
+ 'Make s’mores or a fun treat and eat it outside.',
+ 'Share one way each person showed kindness today.',
+ 'Sing a worship song together before bed.',
+ 'Act out a Bible story as a family, with {baby} as the audience.',
+ 'Watch the sunset together.'
 ];
 
 const QLAB = ['Observe','Understand','See God','Search your heart','Respond'];
@@ -733,7 +934,7 @@ let mealCalDraft='', editId=null, delArmed=false, planDay=1, planResetArmed=fals
 let tab='home', col=null, sampleFn=null, mealDraft='', wifeBusy=false, resetArmed=false;
 let dirtyDay=false, dirtyProf=false, saveT=null;
 
-function blankDay(){return {qt:{secs:0,run:null,done:false,hit:false,ans:{},honor:null,honorDone:false},wife:{done:false,off:0,fresh:null,peek:false},fam:{seed:0,done:[]},wo:{plan:null,sets:{},walk:false,sauna:false,done:false},water:0,meals:[],updatedAt:0}}
+function blankDay(){return {qt:{secs:0,run:null,done:false,hit:false,ans:{},honor:null,honorDone:false},wife:{done:false,off:0,fresh:null,peek:false},fam:{seed:0,s:{b:0,y:0,a:0},done:[]},wo:{plan:null,sets:{},walk:false,sauna:false,done:false},water:0,meals:[],updatedAt:0}}
 function normDay(x){const b=blankDay();x=x||{};const d={...b,...x,qt:{...b.qt,...(x.qt||{})},wife:{...b.wife,...(x.wife||{})},fam:{...b.fam,...(x.fam||{})},wo:{...b.wo,...(x.wo||{})},meals:Array.isArray(x.meals)?x.meals:[]};d.meals.forEach(m=>{if(m.pending){m.pending=false}});if(!Array.isArray(d.fam.done))d.fam.done=[];return d}
 
 function keyOf(dt){return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')}
@@ -831,10 +1032,10 @@ function lockState(){
 }
 function fastState(){const s=toMin(S.settings.fastStart),e=toMin(S.settings.fastEnd),m=nowMin();const open=s<e?(m>=s&&m<e):(m>=s||m<e);return{open,left:((open?e:s)-m+1440)%1440}}
 
-function famPicks(d){const n=dn(),sd=d.fam.seed;return[
-  {k:'b'+((n+sd)%KIDS_BIG.length),who:cap(BIG()),t:KIDS_BIG[(n+sd)%KIDS_BIG.length]},
-  {k:'y'+((n*3+sd)%KIDS_BABY.length),who:cap(BABY()),t:KIDS_BABY[(n*3+sd)%KIDS_BABY.length]},
-  {k:'a'+((n*7+sd)%KIDS_ALL.length),who:'Everyone',t:KIDS_ALL[(n*7+sd)%KIDS_ALL.length]}]}
+function famPicks(d){const n=dn(),sd=d.fam.seed,o=d.fam.s||{},ib=(n+sd+(o.b||0))%KIDS_BIG.length,iy=(n*3+sd+(o.y||0))%KIDS_BABY.length,ia=(n*7+sd+(o.a||0))%KIDS_ALL.length;return[
+  {r:'b',k:'b'+ib,who:cap(BIG()),t:KIDS_BIG[ib]},
+  {r:'y',k:'y'+iy,who:cap(BABY()),t:KIDS_BABY[iy]},
+  {r:'a',k:'a'+ia,who:'Everyone',t:KIDS_ALL[ia]}]}
 function wifeIdea(d){return d.wife.fresh||WIFE[(dn()+d.wife.off)%WIFE.length]}
 function calTotal(d){return d.meals.reduce((a,m)=>a+(Number(m.cal)||0),0)}
 function inWindow(ts){const dt=new Date(ts),m=dt.getHours()*60+dt.getMinutes(),s=toMin(S.settings.fastStart),e=toMin(S.settings.fastEnd);return s<e?(m>=s&&m<e):(m>=s||m<e)}
@@ -965,8 +1166,8 @@ function viewFamilyBase(){
   const wc=wifeCard(d);
   return `<header class="pagehead"><h1 class="display">Family</h1><p class="anchor">${ls.on&&!ls.night?`Lockdown until ${fmt12(ls.w.e)}. Be all here.`:`Made for your evening lockdown, ${fmt12(w0.s)} to ${fmt12(w0.e)}.`}</p></header>
   ${wc}
-  <section class="card"><div class="cardhead"><h2>Tonight with the kids</h2><button class="iconbtn" data-act="fam-shuffle" aria-label="Show different ideas">${ic('shuffle',20)}</button></div>
-    ${famPicks(d).map(p=>{const on=d.fam.done.includes(p.k);return `<button class="chal ${on?'on':''}" data-act="fam" data-v="${p.k}" aria-pressed="${on}"><span class="grow"><span class="tag">${esc(p.who)}</span><span class="txt">${fill(p.t)}</span></span><span class="chk ${on?'on':''}">${ic('check',16)}</span></button>`}).join('')}
+  <section class="card"><div class="cardhead"><h2>Tonight with the kids</h2><button class="iconbtn" data-act="fam-shuffle" aria-label="Show different ideas for the unchecked ones">${ic('shuffle',20)}</button></div>
+    ${famPicks(d).map(p=>{const on=d.fam.done.includes(p.k);return `<div class="chalrow"><button class="chal ${on?'on':''}" data-act="fam" data-v="${p.k}" aria-pressed="${on}"><span class="grow"><span class="tag">${esc(p.who)}</span><span class="txt">${fill(p.t)}</span></span><span class="chk ${on?'on':''}">${ic('check',16)}</span></button>${on?'':`<button class="iconbtn sm" data-act="fam-one" data-v="${p.r}" aria-label="Different idea for ${esc(p.who)}">${ic('shuffle',16)}</button>`}</div>`}).join('')}
   </section>`;
 }
 
@@ -1392,7 +1593,8 @@ document.addEventListener('click',e=>{
     case 'wife-fresh':freshIdea();break;
     case 'wife-peek':d.wife.peek=true;markDay();render();break;
     case 'fam':{const i=d.fam.done.indexOf(v);if(i>=0)d.fam.done.splice(i,1);else{d.fam.done.push(v);toast('Memory made.')}markDay();render();break}
-    case 'fam-shuffle':d.fam.seed++;markDay();render();break;
+    case 'fam-shuffle':{d.fam.s=d.fam.s||{};famPicks(d).forEach(p=>{if(!d.fam.done.includes(p.k))d.fam.s[p.r]=(d.fam.s[p.r]||0)+1});markDay();render();break}
+    case 'fam-one':d.fam.s=d.fam.s||{};d.fam.s[v]=(d.fam.s[v]||0)+1;markDay();render();break;
     case 'wo-plan':d.wo.plan=(+v===new Date().getDay())?null:+v;markDay();render();break;
     case 'set-done':{
       const key=b.dataset.k,row=b.closest('.setrow'),st=d.wo.sets[key]||(d.wo.sets[key]={});const pd=planDow(d),i=+b.dataset.i;
