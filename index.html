@@ -938,7 +938,9 @@ function blankDay(){return {qt:{secs:0,run:null,done:false,hit:false,ans:{},hono
 function normDay(x){const b=blankDay();x=x||{};const d={...b,...x,qt:{...b.qt,...(x.qt||{})},wife:{...b.wife,...(x.wife||{})},fam:{...b.fam,...(x.fam||{})},wo:{...b.wo,...(x.wo||{})},meals:Array.isArray(x.meals)?x.meals:[]};d.meals.forEach(m=>{if(m.pending){m.pending=false}});if(!Array.isArray(d.fam.done))d.fam.done=[];return d}
 
 function keyOf(dt){return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')}
-function todayKey(){return keyOf(new Date())}
+let selectedDate=null;
+function actualToday(){return keyOf(new Date())}
+function todayKey(){return selectedDate||actualToday()}
 function fromKey(k){const[y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d)}
 function dn(k=todayKey()){const[y,m,d]=k.split('-').map(Number);return Math.round(Date.UTC(y,m-1,d)/864e5)}
 function day(k=todayKey()){if(!S.days[k])S.days[k]=blankDay();return S.days[k]}
@@ -946,7 +948,7 @@ function day(k=todayKey()){if(!S.days[k])S.days[k]=blankDay();return S.days[k]}
 function loadLocal(){try{const r=localStorage.getItem(LK);if(r){const o=JSON.parse(r);S.settings={...DEFAULTS,...(o.settings||{})};S.lifts=o.lifts||{};S.hist=o.hist||{};S.updatedAt=o.updatedAt||0;S.prayers=o.prayers||[];S.weights=o.weights||[];S.liftLog=o.liftLog||{};S.dates=o.dates||{log:[],next:null};S.memo=o.memo||{};S.days={};for(const k in (o.days||{}))S.days[k]=normDay(o.days[k]);}}catch(e){}}
 function migrate(){if(!S.settings.v2){if(+S.settings.water===100)S.settings.water=120;S.settings.v2=true;dirtyProf=true}}
 function pruneMemo(){const w=weekNo();for(const k in (S.memo||{}))if(w-(+k.slice(1))>8)delete S.memo[k];if(S.weights&&S.weights.length>200)S.weights=S.weights.slice(-200)}
-function prune(){pruneMemo();const t=dn();for(const k in S.days)if(t-dn(k)>21)delete S.days[k];for(const k in S.hist)if(t-dn(k)>120)delete S.hist[k]}
+function prune(){pruneMemo();const t=dn();for(const k in S.days)if(t-dn(k)>120)delete S.days[k];for(const k in S.hist)if(t-dn(k)>120)delete S.hist[k]}
 function markDay(){const k=todayKey(),d=day(k);d.updatedAt=Date.now();S.hist[k]=flags(d,k);S.updatedAt=Date.now();dirtyDay=true;dirtyProf=true;schedule()}
 function markProf(){S.updatedAt=Date.now();dirtyProf=true;schedule()}
 function schedule(){clearTimeout(saveT);saveT=setTimeout(flush,700)}
@@ -992,7 +994,7 @@ function mmss(s){s=Math.floor(s);return `${Math.floor(s/60)}:${String(s%60).padS
 function nowMin(){const n=new Date();return n.getHours()*60+n.getMinutes()}
 function isTyping(){const a=document.activeElement;return a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)}
 function qtSecs(d){return d.qt.secs+(d.qt.run?(Date.now()-d.qt.run)/1000:0)}
-function planDow(d){return d.wo.plan??new Date().getDay()}
+function planDow(d){return d.wo.plan??fromKey(todayKey()).getDay()}
 function workoutMet(d,k){const dow=fromKey(k).getDay();const p=PLAN[dow];if(p.rest)return true;if(p.walk)return !!d.wo.walk;return !!d.wo.done}
 function unlocked(d,k){return d.qt.done&&workoutMet(d,k)}
 function planCopy(){if(!S.settings.plan)S.settings.plan=JSON.parse(JSON.stringify(DEFAULT_PLAN));return S.settings.plan}
@@ -1014,7 +1016,7 @@ function liftPlan(name,defSets){const P=lastSession(name);if(!P)return{sets:defS
   const sw=P.sw.map(x=>{const w=parseFloat(x.w);return{w:w>0?String(x.ok?w+5:w):(x.w||''),r:x.r||'',up:!!(x.ok&&w>0)}});
   return{sets:P.n||P.sw.length||defSets,sw,last:P,up:sw.some(x=>x.up)}}
 function setsFor(d,pd,i){const key=`${pd}:${i}`;return d.wo.n?.[key]??liftPlan(exName(d,pd,i),PLAN[pd].ex[i][1]).sets}
-function setCount(d,pd){const P=PLAN[pd];if(!P.ex)return[0,0];let t=0,n=0;P.ex.forEach((e,i)=>{const c=setsFor(d,pd,i);for(let j=0;j<c;j++){t++;if(d.wo.sets[`${pd}:${i}-${j}`]?.done)n++}});return[n,t]}
+function setCount(d,pd){const P=PLAN[pd];if(!P.ex)return[0,0];let t=0,n=0;P.ex.forEach((e,i)=>{if(d.wo.skipped?.[`${pd}:${i}`])return;const c=setsFor(d,pd,i);for(let j=0;j<c;j++){t++;if(d.wo.sets[`${pd}:${i}-${j}`]?.done)n++}});return[n,t]}
 function saveLift(d,pd,i){const name=exName(d,pd,i),target=PLAN[pd].ex[i][2];const tn=parseInt(target)||0;const c=setsFor(d,pd,i);const tk=todayKey();
   const done=[];for(let j=0;j<c;j++){const st=d.wo.sets[`${pd}:${i}-${j}`];if(st&&st.done)done.push({w:st.w||'',r:st.r||'',ok:(parseFloat(st.r)||0)>=tn})}
   const L=S.lifts[name];const prev=L?(L.day===tk?L.prev:{day:L.day,n:L.n,sw:L.sw,w:L.w,r:L.r,sets:L.sets,hit:L.hit}):null;
@@ -1189,7 +1191,7 @@ function viewWorkoutBase(){
   const [sn,stt]=setCount(d,pd);
   return head+`<section class="card"><div class="cardhead"><div><h2>${esc(P.name)}</h2><p class="muted small">${P.ex.length} exercises, about 25 minutes. ${sn} of ${stt} sets done.</p></div>
     <div class="restpill" aria-label="Rest timer length"><button data-act="rest-dec" aria-label="Shorter rest">−</button><span>${S.settings.rest}s rest</span><button data-act="rest-inc" aria-label="Longer rest">+</button></div></div></section>
-  ${P.ex.map((ex,i)=>{const target=ex[2],key0=`${pd}:${i}`,name=exName(d,pd,i),info=exInfo(name),swapped=!!(d.wo.swap&&d.wo.swap[key0]);
+  ${P.ex.map((ex,i)=>{if(d.wo.skipped&&d.wo.skipped[`${pd}:${i}`])return `<section class="card"><div class="exhead"><div class="grow"><h2>${esc(ex[0])}</h2><p class="muted small">Removed for this day</p></div><button class="swapbtn" data-act="ex-restore" data-v="${pd}:${i}">Restore</button></div></section>`;const target=ex[2],key0=`${pd}:${i}`,name=exName(d,pd,i),info=exInfo(name),swapped=!!(d.wo.swap&&d.wo.swap[key0]);
     const lp=liftPlan(name,ex[1]);const sets=setsFor(d,pd,i);const hist=lp.sw.length>0;let rows='';
     const s0=d.wo.sets[`${pd}:${i}-0`]||{};
     for(let j=0;j<sets;j++){const key=`${pd}:${i}-${j}`;const st=d.wo.sets[key]||{};const h=lp.sw[j]||lp.sw[lp.sw.length-1];
@@ -1202,7 +1204,7 @@ function viewWorkoutBase(){
     const hint=lp.last?`Last time: ${lp.last.sw.map(x=>`${esc(x.w||'—')}×${esc(x.r||'—')}`).join(', ')}.${lp.up?` <span class="uphint">Up 5 lb on every set where you hit your reps.</span>`:' Same weight until you hit your reps.'}`:'Enter set 1 and the rest fill in.';
     return `<section class="card ex"><div class="exhead">${info&&info.img?`<button class="exthumb" data-act="ex-show" data-v="${esc(name)}" aria-label="See how to do ${esc(name)}"><img src="${info.img[0]}" alt=""></button>`:''}
       <div class="grow"><h2>${esc(name)}</h2><p class="target">${sets} × ${esc(target)}${info?` · ${esc(info.label)}`:''}</p></div>
-      <button class="swapbtn" data-act="ex-swap" data-v="${key0}" aria-label="Swap ${esc(name)} for another exercise">${ic('shuffle',16)} Swap</button></div>
+      <button class="swapbtn" data-act="ex-swap" data-v="${key0}" aria-label="Swap ${esc(name)} for another exercise">${ic('shuffle',16)} Swap</button><button class="swapbtn" data-act="ex-skip" data-v="${key0}" aria-label="Remove ${esc(name)} for this day">Remove</button></div>
       ${swapped?`<p class="small swapnote">Swapped for today, from ${esc(ex[0])}. <button class="linkbtn" data-act="ex-unswap" data-v="${key0}">Undo</button></p>`:''}
       <p class="muted small" style="margin-top:6px">${hint}</p>${rows}
     <div class="setacts"><button data-act="set-add" data-v="${key0}">+ Add set</button>${sets>1&&!lastDone?`<button data-act="set-rm" data-v="${key0}">Remove set</button>`:''}</div></section>`}).join('')}
@@ -1310,7 +1312,7 @@ function viewSettings(){
 
 const TABS=[['home','Home','home'],['quiet','Quiet time','book'],['workout','Workout','dumb'],['family','Family','heart'],['food','Food','food']];
 function renderTabs(){$('#tabs').innerHTML=TABS.map(([id,l,i])=>`<button class="tab ${tab===id?'on':''}" data-act="tab" data-v="${id}" aria-current="${tab===id?'page':'false'}">${ic(i,24)}${l}</button>`).join('')}
-function render(){const v={home:viewHome,quiet:viewQT,workout:viewWorkout,family:viewFamily,food:viewFood}[tab];$('#app').innerHTML=appbar()+v();renderTabs();
+function render(){const v={home:viewHome,quiet:viewQT,workout:viewWorkout,family:viewFamily,food:viewFood}[tab];$('#app').innerHTML=appbar()+`<section class="card" style="padding:12px 16px;margin-bottom:12px"><div style="display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap"><button class="swapbtn" data-act="date-prev">←</button><label style="font-weight:700;flex:1;text-align:center">Day <input type="date" id="historyDate" value="${todayKey()}" max="${actualToday()}" style="max-width:165px;border:1px solid var(--line);border-radius:12px;padding:8px;background:var(--field);color:var(--text)"></label><button class="swapbtn" data-act="date-next" ${todayKey()===actualToday()?'disabled':''}>→</button></div>${selectedDate?'<button class="link" data-act="date-today">Back to today</button>':''}</section>`+v();renderTabs();
   const act=document.activeElement,typing=isTyping();
   const sh=$('#sheet');if(!sh.hidden&&!(typing&&sh.contains(act)))sh.innerHTML=viewSettings();
   const ed=$('#editor');if(!ed.hidden&&!(typing&&ed.contains(act)))ed.innerHTML=viewMealEdit();
@@ -1369,14 +1371,14 @@ function chartSVG(pts,unit){if(pts.length<2)return '<p class="muted small" style
   const xy=pts.map((p,i)=>[P+i*(W2-2*P)/(pts.length-1),H-P-((p.v-mn)/rg)*(H-2*P)]);
   return `<svg viewBox="0 0 ${W2} ${H}" class="chart" role="img" aria-label="Trend from ${pts[0].v} to ${pts[pts.length-1].v} ${unit}"><polyline points="${xy.map(a=>a.join(',')).join(' ')}" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${xy.map(a=>`<circle cx="${a[0]}" cy="${a[1]}" r="3.5" fill="var(--accent)"/>`).join('')}<text x="${P}" y="12" class="ct">${mx} ${unit}</text><text x="${P}" y="${H-2}" class="ct">${mn} ${unit}</text></svg>`}
 let progEx='';
-function progressCard(){const Wt=(S.weights||[]).slice(-16),last=Wt[Wt.length-1],first=Wt[0];
+function progressCard(){const Wt=(S.weights||[]).slice().sort((a,b)=>a.day.localeCompare(b.day)).slice(-16),last=Wt[Wt.length-1],first=Wt[0];
   const names=Object.keys(S.liftLog||{}).filter(n=>(S.liftLog[n]||[]).length).sort();if(!progEx||!names.includes(progEx))progEx=names[0]||'';
   const L=progEx?(S.liftLog[progEx]||[]).slice(-16):[];
   const ch=last&&first&&Wt.length>1?Math.round((last.w-first.w)*10)/10:null;
   return `<section class="card"><h2>Progress</h2>
-  <h3>Body weight</h3><div class="composer"><label class="calbox"><input type="number" inputmode="decimal" step="0.1" id="wtIn" placeholder="${last?last.w:'0'}" aria-label="Body weight in pounds"><span>lb</span></label><button class="btn" data-act="wt-log">Log weight</button></div>
+  <h3>Body weight</h3><div class="composer"><label class="calbox"><input type="number" inputmode="decimal" step="0.1" id="wtIn" placeholder="${last?last.w:'0'}" aria-label="Body weight in pounds"><span>lb</span></label><input type="date" id="wtDate" value="${todayKey()}" max="${actualToday()}" aria-label="Weigh-in date" style="padding:8px;border-radius:12px;border:1px solid var(--line);background:var(--field);color:var(--text)"><button class="btn" data-act="wt-log">Log weight</button></div>
   ${last&&+S.settings.startWeight?`<p class="bigwin">${Math.round((+S.settings.startWeight-last.w)*10)/10} lb lost since you started at ${S.settings.startWeight}</p>`:''}${last?`<p class="muted small" style="margin-top:6px">Latest ${last.w} lb${ch!=null?`, ${ch>0?'+':''}${ch} lb since ${new Date(fromKey(first.day)).toLocaleDateString([], {month:'short',day:'numeric'})}`:''}.</p>`:''}
-  ${chartSVG(Wt.map(x=>({v:+x.w})),'lb')}
+  ${Wt.length?`<div class="muted small" style="margin:10px 0">${Wt.slice().reverse().slice(0,8).map(x=>`<div style="padding:5px 0">${esc(x.day)} · ${esc(x.w)} lb</div>`).join('')}</div>`:''}${chartSVG(Wt.map(x=>({v:+x.w})),'lb')}
   <h3>Strength</h3>${names.length?`<select data-in="progex" aria-label="Exercise">${names.map(n=>`<option ${n===progEx?'selected':''}>${esc(n)}</option>`).join('')}</select>
   ${L.length?`<p class="muted small" style="margin-top:6px">Top set: ${L[0].w} lb → ${L[L.length-1].w} lb over ${L.length} workout${L.length===1?'':'s'}.</p>`:''}${chartSVG(L.map(x=>({v:+x.w})),'lb')}`:'<p class="muted small">Finish a few workouts and your top weights will chart here.</p>'}</section>`}
 function weightLine(){const all=S.weights||[],cur=all.length?+all[all.length-1].w:null,st=+S.settings.startWeight||0;if(cur==null||!st)return null;const lost=Math.round((st-cur)*10)/10;return lost>0?`Weight lost: ${lost} lb since I started`:'Weight lost: still working on it'}
@@ -1582,6 +1584,11 @@ document.addEventListener('click',e=>{
   const a=b.dataset.act,v=b.dataset.v,d=day();
   if(a!=='me-del')delArmed=false;if(a!=='pe-reset')planResetArmed=false;
   try{switch(a){
+    case 'date-prev':{const dt=fromKey(todayKey());dt.setDate(dt.getDate()-1);selectedDate=keyOf(dt);render();break}
+    case 'date-next':{const dt=fromKey(todayKey());dt.setDate(dt.getDate()+1);selectedDate=keyOf(dt)===actualToday()?null:keyOf(dt);render();break}
+    case 'date-today':selectedDate=null;render();break;
+    case 'ex-skip':{d.wo.skipped=d.wo.skipped||{};d.wo.skipped[v]=true;markDay();render();toast('Exercise removed for this day.');break}
+    case 'ex-restore':{if(d.wo.skipped)delete d.wo.skipped[v];markDay();render();break}
     case 'tab':tab=v;render();window.scrollTo(0,0);break;
     case 'qt-toggle':if(d.qt.run){d.qt.secs=qtSecs(d);d.qt.run=null}else d.qt.run=Date.now();markDay();render();break;
     case 'qt-manual':d.qt.secs=Math.max(qtSecs(d),900);d.qt.run=null;d.qt.hit=true;markDay();render();break;
@@ -1601,7 +1608,7 @@ document.addEventListener('click',e=>{
       if(st.done){st.done=false;saveLift(d,pd,i);markDay();render();break}
       st.w=row.querySelector('[data-in="w"]').value;st.r=row.querySelector('[data-in="r"]').value;st.done=true;
       saveLift(d,pd,i);
-      let next=null;PLAN[pd].ex.forEach((ex,x)=>{const c=setsFor(d,pd,x);for(let j=0;j<c;j++){if(!next&&!d.wo.sets[`${pd}:${x}-${j}`]?.done)next=`Next: ${exName(d,pd,x)}, set ${j+1}`}});
+      let next=null;PLAN[pd].ex.forEach((ex,x)=>{if(d.wo.skipped?.[`${pd}:${x}`])return;const c=setsFor(d,pd,x);for(let j=0;j<c;j++){if(!next&&!d.wo.sets[`${pd}:${x}-${j}`]?.done)next=`Next: ${exName(d,pd,x)}, set ${j+1}`}});
       markDay();render();
       if(next)startRest(next);else toast('All sets done. Walk, then finish.');
       break}
@@ -1684,7 +1691,7 @@ document.addEventListener('click',e=>{
     case 'date-plan':{const dy=($('#dtDay')||{}).value,idea=String(($('#dtIdea')||{}).value||'').trim();if(!dy){toast('Pick a day.');break}S.dates=S.dates||{log:[],next:null};S.dates.next={day:dy,idea:idea.slice(0,120)||'Date night'};markProf();render();toast('Date night planned.');break}
     case 'date-done':{S.dates=S.dates||{log:[],next:null};const n=S.dates.next||{};S.dates.log.push({day:todayKey(),idea:n.idea||'Date night'});S.dates.log=S.dates.log.slice(-100);S.dates.next=null;markProf();render();toast('Logged. Well done.');break}
     case 'date-clear':S.dates.next=null;markProf();render();break;
-    case 'wt-log':{const w=parseFloat(($('#wtIn')||{}).value);if(!(w>50&&w<700)){toast('Enter your weight in pounds.');break}S.weights=(S.weights||[]).filter(x=>x.day!==todayKey());S.weights.push({day:todayKey(),w:Math.round(w*10)/10});markProf();render();toast('Weight logged.');break}
+    case 'wt-log':{const w=parseFloat(($('#wtIn')||{}).value);if(!(w>50&&w<700)){toast('Enter your weight in pounds.');break}const wd=($('#wtDate')||{}).value||todayKey();if(wd>actualToday()){toast('Choose today or an earlier date.');break}S.weights=(S.weights||[]).filter(x=>x.day!==wd);S.weights.push({day:wd,w:Math.round(w*10)/10});S.weights.sort((a,b)=>a.day.localeCompare(b.day));markProf();render();toast('Weight logged.');break}
     case 'report-open':lastReport=buildReport();openModal(viewReport);break;
     case 'report-share':{const t=($('#repText')||{}).value||lastReport;lastReport=t;if(navigator.share){navigator.share({text:t}).catch(()=>{})}else{try{navigator.clipboard.writeText(t);toast('Copied. Paste it into a text.')}catch(e){toast('Select the text and copy it.')}}break}
     case 'report-copy':{const t=($('#repText')||{}).value||lastReport;lastReport=t;try{navigator.clipboard.writeText(t).then(()=>toast('Copied.'),()=>toast('Select the text and copy it.'))}catch(e){toast('Select the text and copy it.')}break}
@@ -1733,6 +1740,7 @@ document.addEventListener('input',e=>{
 });
 document.addEventListener('change',e=>{
   const el=e.target;
+  if(el.id==='historyDate'){if(el.value&&el.value<=actualToday()){selectedDate=el.value===actualToday()?null:el.value;render()}return}
   if(el.dataset.me==='time'&&el.value){const d=day(),m=d.meals.find(x=>x.id===editId);if(m){const[h,mi]=el.value.split(':').map(Number);const dt=new Date(m.at);dt.setHours(h,mi,0,0);m.at=dt.getTime();d.meals.sort((x,y)=>y.at-x.at);markDay();render()}return}
   if(el.dataset.plan){const p=planCopy(),pd=p[planDay],i=+el.dataset.i,k=el.dataset.plan;
     if(k==='ex-name'&&pd.ex[i]&&!pd.ex[i][0].trim())pd.ex[i][0]='Exercise';
@@ -1757,9 +1765,9 @@ document.addEventListener('change',e=>{
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('#rest').hidden)stopRest();else if(!$('#modal').hidden)closeModal();else if(!$('#editor').hidden){$('#editor').hidden=true;editId=null;render()}else if(!$('#sheet').hidden){$('#sheet').hidden=true;render()}}});
 
 /* ---------- clock ---------- */
-let curKey=todayKey(),tick=0;
+let curKey=actualToday(),tick=0;
 setInterval(()=>{
-  const k=todayKey();if(k!==curKey){curKey=k;if(!isTyping())render();return}
+  const k=actualToday();if(k!==curKey){curKey=k;if(!isTyping())render();return}
   if(tab==='quiet'){const d=day(),s=qtSecs(d),c=$('#qtClock');if(c){c.textContent=mmss(s);$('#qtBar').style.width=Math.min(100,s/9)+'%';if(s>=900)$('#qtOf').textContent='15 minutes reached'}
     if(d.qt.run&&s>=900&&!d.qt.hit){d.qt.hit=true;markDay();beep();toast('15 minutes. Keep going or finish up.')}}
   if(++tick%30===0&&(tab==='home'||tab==='food'||tab==='family')&&!isTyping()&&$('#sheet').hidden)render();
